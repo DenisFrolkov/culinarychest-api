@@ -13,6 +13,7 @@ public class Step
     public string Description { get; set; }
     [Required(ErrorMessage = "Step order is required.")]
     public int Order { get; set; }
+    [Required]
     public int RecipeId { get; set; }
     [ForeignKey("RecipeId")]
     public Recipe Recipe { get; set; }

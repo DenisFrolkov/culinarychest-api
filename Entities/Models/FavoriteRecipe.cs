@@ -8,7 +8,9 @@ public class FavoriteRecipe
 {
     [Column("FavoriteRecipeId")]
     public int FavoriteRecipeId { get; set; }
-    public string UserId { get; set; }
+    [Required]
+    public int UserId { get; set; }
+    [Required]
     public int RecipeId { get; set; }
     public DateTime AddedDate { get; set; }
     [ForeignKey("UserId")]

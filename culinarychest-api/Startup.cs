@@ -23,6 +23,7 @@ public class Startup
         services.ConfigureIISIntegration(); //вызывает метод расширения ConfigureIISIntegration, предназначенный для настройки интеграции с IIS
         services.ConfigureLoggerService(); //предполагает вызов метода расширения для настройки сервиса логирования.
         services.AddControllers(); //предполагает вызов метода расширения для настройки сервиса логирования.
+        services.ConfigureSqlContext(Configuration);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env) { //это метод, где вы настраиваете конвейер обработки HTTP-запросов. В этом методе:
