@@ -1,9 +1,9 @@
 namespace Contracts;
 
-public interface ILoggerManager
+public interface ILoggerManager //Этот интерфейс определяет базовые методы для записи различных типов сообщений в журнал
 {
-    void LogInfo(string message); 
-    void LogWarn(string message);
-    void LogDebug(string message);
-    void LogError(string message);
+    void LogInfo(string message); //редназначен для записи информационных сообщений
+    void LogWarn(string message); //используется для записи предупреждений
+    void LogDebug(string message); //предназначен для записи отладочных сообщений
+    void LogError(string message); //используется для записи сообщений об ошибках
 }
