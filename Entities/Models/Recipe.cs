@@ -11,8 +11,9 @@ public class Recipe
     public int AuthorId { get; set; }
     [Required(ErrorMessage = "Recipe title - required field.")]
     public string Title { get; set; }
-    [Required(ErrorMessage = "Recipe ingredients - required field.")]
+    [Required(ErrorMessage = "Recipe images - required field.")]
     public byte[] RecipeImage { get; set; }
+    [Required(ErrorMessage = "Recipe ingredients - required field.")]
     public string Ingredients { get; set; }
     [Required(ErrorMessage = "A recipe must have at least one field with a recipe pitch.")]
     public ICollection<Step> Steps { get; set; }
