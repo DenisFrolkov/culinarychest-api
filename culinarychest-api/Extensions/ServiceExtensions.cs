@@ -2,6 +2,7 @@ using Contracts;
 using Entities;
 using LoggerService;
 using Microsoft.EntityFrameworkCore;
+using Repository;
 
 namespace culinarychest_api.Extensions;
 
@@ -27,4 +28,11 @@ public static class ServiceExtensions
             //AddDbContext, вы указываете, как DbContext должен быть настроен. В данном случае, используется UseNpgsql для указания, что DbContext должен использовать PostgreSQL в качестве базы данных
             opts.UseNpgsql(configuration.GetConnectionString("sqlConnection"), b => 
                 b.MigrationsAssembly("culinarychest-api"))); //указывает, что сборка с миграциями находится в проекте culinarychest-api
+
+    public static void ConfigureRepositoryManager(this IServiceCollection services) => 
+        //метод расширения регистрирует RepositoryManager как реализацию интерфейса IRepositoryManager в контейнере зависимостей.
+        //Это позволяет вашему приложению использовать RepositoryManager для централизованного управления репозиториями,
+        //что упрощает тестирование и поддержку кода.
+        services.AddScoped<IRepositoryManager, RepositoryManager>();
+
 }

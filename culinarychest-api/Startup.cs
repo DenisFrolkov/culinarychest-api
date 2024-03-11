@@ -22,6 +22,7 @@ public class Startup
         services.ConfigureCors(); //вызывает метод расширения ConfigureCors, который настраивает CORS для приложения
         services.ConfigureIISIntegration(); //вызывает метод расширения ConfigureIISIntegration, предназначенный для настройки интеграции с IIS
         services.ConfigureLoggerService(); //предполагает вызов метода расширения для настройки сервиса логирования
+        services.ConfigureRepositoryManager(); //регистрирует RepositoryManager как реализацию интерфейса IRepositoryManager в контейнере зависимостей.
         services.AddControllers(); //предполагает вызов метода расширения для настройки сервиса логирования
         services.ConfigureSqlContext(Configuration); //предполагает вызов метода расширения для настройки контекста базы данных SQL
     }
