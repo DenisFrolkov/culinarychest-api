@@ -9,4 +9,9 @@ public class FavoriteRecipeRepository : RepositoryBase<FavoriteRecipe>, IFavorit
     public FavoriteRecipeRepository(RepositoryContext repositoryContext) : base(repositoryContext)
     {
     }
+
+    public IEnumerable<FavoriteRecipe> GetAllFavoriteRecipes(bool trackChanges) =>
+        FindAll(trackChanges)
+            .OrderBy(c => c.FavoriteRecipeId)
+            .ToList();
 }

@@ -25,6 +25,7 @@ public class Startup
         services.ConfigureRepositoryManager(); //регистрирует RepositoryManager как реализацию интерфейса IRepositoryManager в контейнере зависимостей.
         services.AddControllers(); //предполагает вызов метода расширения для настройки сервиса логирования
         services.ConfigureSqlContext(Configuration); //предполагает вызов метода расширения для настройки контекста базы данных SQL
+        services.AddAutoMapper(typeof(Startup));
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env) { //это метод, где вы настраиваете конвейер обработки HTTP-запросов. В этом методе:

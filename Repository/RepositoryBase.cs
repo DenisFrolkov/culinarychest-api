@@ -37,7 +37,7 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
                 .AsNoTracking()
             : RepositoryContext.Set<T>()
                 .Where(expression);
-    
+
     //Эти методы выполняют операции создания, обновления и удаления сущностей типа T в базе данных.
     public void Create(T entity) => RepositoryContext.Set<T>().Add(entity);
     public void Update(T entity) => RepositoryContext.Set<T>().Update(entity);

@@ -24,21 +24,7 @@ public class WeatherForecastController : ControllerBase //класс WeatherFore
         //Метод Get возвращает массив строк. В данном примере, метод выполняет операции создания, обновления и удаления
         //сущностей через репозиторий, но результаты этих операций не используются.
     {
-        _repository.ApplicationUser.Create(_applicationUser);
-        _repository.ApplicationUser.Update(_applicationUser);
-        _repository.ApplicationUser.Delete(_applicationUser);
-        
-        _repository.FavoriteRecipe.Create(_favoriteRecipe);
-        _repository.FavoriteRecipe.Update(_favoriteRecipe);
-        _repository.FavoriteRecipe.Delete(_favoriteRecipe);
-        
-        _repository.Recipe.Create(_recipe);
-        _repository.Recipe.Update(_recipe);
-        _repository.Recipe.Delete(_recipe); 
-        
-        _repository.Step.Create(_step);
-        _repository.Step.Update(_step);
-        _repository.Step.Delete(_step); 
+        _repository.Save();
         
         return new string[] { "value1", "value2" };
     }
