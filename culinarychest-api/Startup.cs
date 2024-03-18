@@ -1,3 +1,4 @@
+using Contracts;
 using culinarychest_api.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
@@ -28,12 +29,13 @@ public class Startup
         services.AddAutoMapper(typeof(Startup));
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env) { //это метод, где вы настраиваете конвейер обработки HTTP-запросов. В этом методе:
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger) { //это метод, где вы настраиваете конвейер обработки HTTP-запросов. В этом методе:
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage(); //Если приложение работает в режиме разработки (env.IsDevelopment()), включается страница исключений разработчика
         }
         
+        app.ConfigureExceptionHandler(logger);
         app.UseHttpsRedirection(); //перенаправляет все HTTP-запросы на HTTPS
         app.UseHsts(); //добавляет заголовок HSTS для усиления безопасности
         app.UseStaticFiles(); //позволяет использовать статические файлы

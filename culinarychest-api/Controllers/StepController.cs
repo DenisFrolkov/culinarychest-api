@@ -1,3 +1,4 @@
+using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
@@ -13,35 +14,22 @@ public class StepController : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
+    private readonly IMapper _mapper;
     
-    public StepController(IRepositoryManager repository, ILoggerManager logger) //IRepositoryManager и ILoggerManager.
+    public StepController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper) //IRepositoryManager и ILoggerManager.
         //IRepositoryManager используется для доступа к данным, а ILoggerManager для логирования.
     {
         _repository = repository;
         _logger = logger;
+        _mapper = mapper;
     }
 
     public IActionResult GetAllSteps()
     {
-        //метод обрабатывает HTTP GET запросы и возвращает все шаги из базы данных. Внутри метода используется блок try-catch
-        //для обработки возможных исключений. Если запрос успешно обработан, метод возвращает статус 200 (OK) и данные шагов. 
-        try
-        {
-            var step = _repository.Step.GetAllSteps(trackChanges: false);
-            var stepDto = step.Select(step => new StepDto
-            {
-                //преобразовывает информацию о пользователях в dto список
-                StepId = step.StepId,
-                Description = step.Description,
-                Order = step.Order,
-                RecipeId = step.RecipeId
-            }).ToList();
-            return Ok(stepDto);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Something went wrong in the {nameof(GetAllSteps)} action {ex}");
-            return StatusCode(500, "Internal server error");
-        }
+        //метод обрабатывает HTTP GET запросы и возвращает все шаги из базы данных. 
+        var steps = _repository.Step.GetAllSteps(trackChanges: false);
+        var stepDto = _mapper.Map<IEnumerable<StepDto>>(steps);
+        //Использует AutoMapper для преобразования каждого объекта Step в объект StepDto. Результатом является коллекция объектов StepDto.
+        return Ok(stepDto);
     }
 }

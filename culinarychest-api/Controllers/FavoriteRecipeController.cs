@@ -1,4 +1,6 @@
+using AutoMapper;
 using Contracts;
+using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,35 +15,22 @@ public class FavoriteRecipeController : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
+    private readonly IMapper _mapper;
 
-    public FavoriteRecipeController(IRepositoryManager repository, ILoggerManager logger) //IRepositoryManager и ILoggerManager.
+    public FavoriteRecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper) //IRepositoryManager и ILoggerManager.
         //IRepositoryManager используется для доступа к данным, а ILoggerManager для логирования.
     {
         _repository = repository;
         _logger = logger;
+        _mapper = mapper;
     }
 
     public IActionResult GetFavoriteRecipe()
     {
-        //метод обрабатывает HTTP GET запросы и возвращает все шаги из базы данных. Внутри метода используется блок try-catch
-        //для обработки возможных исключений. Если запрос успешно обработан, метод возвращает статус 200 (OK) и данные шагов. 
-        try
-        {;
-            var favoriteRecipe = _repository.FavoriteRecipe.GetAllFavoriteRecipes(trackChanges: false);
-            var favoriteRecipeDto = favoriteRecipe.Select(favoriteRecipe => new FavoriteRecipe
-            {
-                //преобразовывает информацию о пользователях в dto список
-                FavoriteRecipeId = favoriteRecipe.FavoriteRecipeId,
-                RecipeId = favoriteRecipe.RecipeId,
-                UserId = favoriteRecipe.UserId,
-                AddedDate = favoriteRecipe.AddedDate
-            }).ToList();
-            return Ok(favoriteRecipeDto);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Something went wrong in the {nameof(GetFavoriteRecipe)} action {ex}");
-            return StatusCode(500, "Internal server error");
-        }
+        //метод обрабатывает HTTP GET запросы и возвращает все шаги из базы данных. 
+        var favoriteRecipes = _repository.FavoriteRecipe.GetAllFavoriteRecipes(trackChanges: false);
+        var favoriteRecipeDto = _mapper.Map<IEnumerable<FavoriteRecipeDto>>(favoriteRecipes);
+        //Использует AutoMapper для преобразования каждого объекта favoriteRecipe в объект FavoriteRecipeDto. Результатом является коллекция объектов FavoriteRecipeDto.
+        return Ok(favoriteRecipeDto);
     }
 }
