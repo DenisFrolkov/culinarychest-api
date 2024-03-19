@@ -12,7 +12,7 @@ public class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
         (
             new Recipe
             {
-                Id = 1,
+                RecipeId = 1,
                 AuthorId = 1,
                 Title = "Рецепт 1",
                 RecipeImage = new byte[123],

@@ -14,4 +14,8 @@ public class FavoriteRecipeRepository : RepositoryBase<FavoriteRecipe>, IFavorit
         FindAll(trackChanges)
             .OrderBy(c => c.FavoriteRecipeId)
             .ToList();
+
+    public FavoriteRecipe GetFavoriteRecipe(int FavoriteRecipeId, bool trackChanges) =>
+        FindByCondition(favoriteRecipe => 
+                favoriteRecipe.FavoriteRecipeId.Equals(FavoriteRecipeId), trackChanges).SingleOrDefault();
 }

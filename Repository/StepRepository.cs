@@ -14,4 +14,8 @@ public class StepRepository : RepositoryBase<Step>, IStepRepository
         FindAll(trackChanges)
             .OrderBy(c => c.RecipeId)
             .ToList();
+
+    public Step GetStep(int stepId, bool trackChanges) =>
+        FindByCondition(step => 
+            step.StepId.Equals(stepId), trackChanges).SingleOrDefault();
 }

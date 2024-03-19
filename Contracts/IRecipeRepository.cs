@@ -14,4 +14,7 @@ public interface IRecipeRepository
     //Он принимает объект Recipe в качестве параметра, который содержит данные нового пользователя.
     
     IEnumerable<Recipe> GetAllRecipes(bool trackChanges); //этот метод, должен вернуть коллекцию всех рецептов из базы данных.
+    IEnumerable<Recipe> GetApplicationUserAllRecipes(int authorId ,bool trackChanges);
+    Recipe GetRecipe(int recipeId, bool trackChanges);
+
 }

@@ -15,4 +15,6 @@ public interface IFavoriteRecipeRepository
 
     IEnumerable<FavoriteRecipe> GetAllFavoriteRecipes(bool trackChanges); //этот метод, должен вернуть коллекцию всех избранных рецептов из базы данных.
 
+    FavoriteRecipe GetFavoriteRecipe(int favoriteRecipeId, bool trackChanges);
+
 }

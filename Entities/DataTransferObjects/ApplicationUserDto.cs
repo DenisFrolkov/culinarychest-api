@@ -6,7 +6,7 @@ public class ApplicationUserDto
     //который используется для передачи данных между слоями приложения.
     //DTO обычно используется для упрощения сложных объектов до простых структур данных,
     //которые легко передавать через сеть или между слоями приложения.
-    public int Id { get; set; }
+    public int UserId { get; set; }
     public string Login { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }

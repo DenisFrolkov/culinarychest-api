@@ -16,6 +16,10 @@ public class ApplicationUserRepository : RepositoryBase<ApplicationUser>, IAppli
     public ApplicationUserRepository(RepositoryContext repositoryContext) : base(repositoryContext){  }
     public IEnumerable<ApplicationUser> GetAllApplicationUsers(bool trackChanges) =>
         FindAll(trackChanges)
-            .OrderBy(c => c.Id)
+            .OrderBy(c => c.UserId)
             .ToList();
+
+    public ApplicationUser GetApplicationUser(int userId, bool trackChanges) => 
+        FindByCondition(applicationUser => 
+            applicationUser.UserId.Equals(userId), trackChanges).SingleOrDefault();
 }

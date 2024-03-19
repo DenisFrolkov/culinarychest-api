@@ -23,13 +23,27 @@ public class StepController : ControllerBase
         _logger = logger;
         _mapper = mapper;
     }
-
+    
     public IActionResult GetAllSteps()
     {
-        //метод обрабатывает HTTP GET запросы и возвращает все шаги из базы данных. 
         var steps = _repository.Step.GetAllSteps(trackChanges: false);
         var stepDto = _mapper.Map<IEnumerable<StepDto>>(steps);
-        //Использует AutoMapper для преобразования каждого объекта Step в объект StepDto. Результатом является коллекция объектов StepDto.
         return Ok(stepDto);
+    }
+    
+    [HttpGet("{stepId}")]
+    public IActionResult GetAllSteps(int stepId)
+    {
+        var step = _repository.Step.GetStep(stepId, trackChanges: false);
+        if (step == null)
+        {
+            _logger.LogInfo($"Recipe with id: {stepId} doesn't exist in the database.");
+            return NotFound();
+        }        else
+        {
+            var stepDto = _mapper.Map<StepDto>(step);
+            return Ok(stepDto);            
+        }
+
     }
 }

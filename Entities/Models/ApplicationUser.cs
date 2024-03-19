@@ -6,8 +6,9 @@ namespace Entities.Models;
 
 public class ApplicationUser
 {
+    [Key]
     [Column("ApplicationUserId")]
-    public int Id { get; set; }
+    public int UserId { get; set; }
     [Required(ErrorMessage = "Login is required.")]
     [MaxLength(20, ErrorMessage = "The maximum length of the login is 50 characters.")]
     public string Login { get; set; }

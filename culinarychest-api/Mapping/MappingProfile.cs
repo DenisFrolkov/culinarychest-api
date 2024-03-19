@@ -11,12 +11,20 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<ApplicationUser, ApplicationUserDto>().ForMember(
-            user => user.Login,
-            opt => opt.MapFrom(au => string.Join(' ', au.Login))
+            applicationUser => applicationUser.UserId,
+            opt => opt.MapFrom(au => string.Join(' ', au.UserId))
         );
-        CreateMap<Recipe, RecipeDto>().ForMember(
-            recipe => recipe.Title,
-            opt => opt.MapFrom(r => string.Join(' ', r.Title))
+        
+        CreateMap<FavoriteRecipe, FavoriteRecipeDto>().ForMember(
+            favoriteRecipe => favoriteRecipe.FavoriteRecipeId,
+            opt => opt.MapFrom(fR => string.Join(' ', fR.FavoriteRecipeId))
+        );
+        
+        CreateMap<Recipe, RecipeDto>();
+        
+        CreateMap<Step, StepDto>().ForMember(
+            step => step.StepId,
+            opt => opt.MapFrom(s => string.Join(' ', s.StepId))
         );
     }
 }

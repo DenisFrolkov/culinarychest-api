@@ -17,21 +17,34 @@ public class ApplicationUserController : ControllerBase
     private readonly IMapper _mapper;
     
     public ApplicationUserController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper) //IRepositoryManager и ILoggerManager.
-        //IRepositoryManager используется для доступа к данным, а ILoggerManager для логирования.
     {
         _repository = repository;
         _logger = logger;
         _mapper = mapper;
     }
-
+    
     [HttpGet]
-    public IActionResult GetAppActionUser()
+    public IActionResult GetApplicationUsers()
     {
-        //метод обрабатывает HTTP GET запросы и возвращает все шаги из базы данных.
         var applicationUsers = _repository.ApplicationUser.GetAllApplicationUsers(trackChanges: false);
         var applicationUserDto = _mapper.Map<IEnumerable<ApplicationUserDto>>(applicationUsers);
-        //Использует AutoMapper для преобразования каждого объекта applicationUser в объект ApplicationUserDto. Результатом является коллекция объектов ApplicationUserDto.
         return Ok(applicationUserDto);
+    }
+    
+    [HttpGet("{userId}")]
+    public IActionResult GetApplicationUser(int userId)
+    {
+        var applicationUser = _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: false);
+        if (applicationUser == null)
+        {
+            _logger.LogInfo($"ApplicationUser with id: {userId} doesn't exist in the database.");
+            return NotFound();
+        }
+        else
+        {
+            var applicationUserDto = _mapper.Map<ApplicationUserDto>(applicationUser);
+            return Ok(applicationUserDto);
+        }
     }
 }
 

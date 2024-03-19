@@ -24,13 +24,26 @@ public class FavoriteRecipeController : ControllerBase
         _logger = logger;
         _mapper = mapper;
     }
-
+    
     public IActionResult GetFavoriteRecipe()
     {
-        //метод обрабатывает HTTP GET запросы и возвращает все шаги из базы данных. 
         var favoriteRecipes = _repository.FavoriteRecipe.GetAllFavoriteRecipes(trackChanges: false);
         var favoriteRecipeDto = _mapper.Map<IEnumerable<FavoriteRecipeDto>>(favoriteRecipes);
-        //Использует AutoMapper для преобразования каждого объекта favoriteRecipe в объект FavoriteRecipeDto. Результатом является коллекция объектов FavoriteRecipeDto.
         return Ok(favoriteRecipeDto);
+    }
+    
+    [HttpGet("{favoriteRecipeId}")]
+    public IActionResult GetFavoriteRecipe(int favoriteRecipeId)
+    {
+        var favoriteRecipe = _repository.FavoriteRecipe.GetFavoriteRecipe(favoriteRecipeId, trackChanges: false);
+        if (favoriteRecipe == null)
+        {
+            _logger.LogInfo($"FavoriteRecipe with id: {favoriteRecipeId} doesn't exist in the database.");
+            return NotFound();
+        }        else
+        {
+            var favoriteRecipeDto = _mapper.Map<FavoriteRecipeDto>(favoriteRecipe);
+            return Ok(favoriteRecipeDto);        
+        }
     }
 }

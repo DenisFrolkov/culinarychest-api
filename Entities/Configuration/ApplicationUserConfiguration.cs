@@ -11,7 +11,7 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
         builder.HasData(
             new ApplicationUser
             {
-                Id = 1,
+                UserId = 1,
                 Login = "denis",
                 Email = "denisfrolkov3@gmail.com",
                 Password = "123456789"

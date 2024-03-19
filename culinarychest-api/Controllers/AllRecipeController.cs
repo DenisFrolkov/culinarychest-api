@@ -24,13 +24,28 @@ public class RecipeController : ControllerBase
         _logger = logger;
         _mapper = mapper;
     }
-
+    
     public IActionResult GetAllRecipes()
     {
-        //метод обрабатывает HTTP GET запросы и возвращает все шаги из базы данных.
-        var recipes = _repository.Recipe.GetAllRecipes(trackChanges: false);
-        var recipeDto = _mapper.Map<IEnumerable<RecipeDto>>(recipes);
-        //Использует AutoMapper для преобразования каждого объекта Recipe в объект RecipeDto. Результатом является коллекция объектов RecipeDto.
+        var recipe = _repository.Recipe.GetAllRecipes(trackChanges: false);
+        var recipeDto = _mapper.Map<IEnumerable<RecipeDto>>(recipe);
         return Ok(recipeDto);
+    }
+    
+    [HttpGet("{recipeId}")]
+    public IActionResult GetRecipe(int recipeId)
+    {
+        var recipe = _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        if (recipe == null)
+        {
+            _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
+            return NotFound();
+        }
+        else
+        { 
+            var recipeDto = _mapper.Map<RecipeDto>(recipe);
+            return Ok(recipeDto);
+        }
+
     }
 }

@@ -14,4 +14,5 @@ public interface IStepRepository
     //Он принимает объект Step в качестве параметра, который содержит данные нового пользователя.
     
     IEnumerable<Step> GetAllSteps(bool trackChanges); //этот метод, должен вернуть коллекцию всех шагов из базы данных.
+    Step GetStep(int stepId, bool trackChanges);
 }

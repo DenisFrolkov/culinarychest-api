@@ -14,4 +14,5 @@ public interface IApplicationUserRepository
     //Он принимает объект ApplicationUser, который идентифицирует пользователя, которого нужно удалить.
 
     IEnumerable<ApplicationUser> GetAllApplicationUsers(bool trackChanges); //этот метод, должен вернуть коллекцию всех пользователей из базы данных.
+    ApplicationUser GetApplicationUser(int userId, bool trackChanges);
 }
