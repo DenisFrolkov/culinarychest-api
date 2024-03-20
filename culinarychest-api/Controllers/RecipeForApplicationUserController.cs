@@ -29,7 +29,6 @@ public class RecipeForApplicationUserController : ControllerBase
             _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
             return NotFound();
         }
-
         var recipesFromDb = _repository.Recipe.GetApplicationUserAllRecipes(authorId, trackChanges: false);
         var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(recipesFromDb);
         return Ok(recipesDto);

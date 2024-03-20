@@ -13,7 +13,7 @@ public class FavoriteRecipeConfiguration : IEntityTypeConfiguration<FavoriteReci
             new FavoriteRecipe
             {
                 FavoriteRecipeId = 1,
-                UserId = 1,
+                AuthorId = 1,
                 RecipeId = 1,
                 AddedDate = new DateTime(2024, 03, 10, 0, 0, 0, DateTimeKind.Utc)
             }

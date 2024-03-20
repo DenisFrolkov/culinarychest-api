@@ -15,9 +15,9 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
             .OrderBy(c => c.RecipeId)
             .ToList();
 
-    public IEnumerable<Recipe> GetApplicationUserAllRecipes(int userId, bool trackChanges) =>
+    public IEnumerable<Recipe> GetApplicationUserAllRecipes(int authorId, bool trackChanges) =>
         FindByCondition(recipe => 
-            recipe.AuthorId.Equals(userId), trackChanges).OrderBy(e => e.Title);
+            recipe.AuthorId.Equals(authorId), trackChanges).OrderBy(e => e.Title);
 
     public Recipe GetRecipe(int recipeId, bool trackChanges) =>
         FindByCondition(recipe => 

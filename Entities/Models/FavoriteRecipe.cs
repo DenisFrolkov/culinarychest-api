@@ -9,12 +9,12 @@ public class FavoriteRecipe
     [Column("FavoriteRecipeId")]
     public int FavoriteRecipeId { get; set; }
     [Required]
-    public int UserId { get; set; }
+    public int AuthorId { get; set; }
     [Required]
     public int RecipeId { get; set; }
     public DateTime AddedDate { get; set; }
-    [ForeignKey("UserId")]
-    public ApplicationUser User { get; set; }
+    [ForeignKey("AuthorId")]
+    public ApplicationUser Author { get; set; }
     [ForeignKey("RecipeId")]
     public Recipe Recipe { get; set; }
 }

@@ -15,16 +15,10 @@ public class MappingProfile : Profile
             opt => opt.MapFrom(au => string.Join(' ', au.UserId))
         );
         
-        CreateMap<FavoriteRecipe, FavoriteRecipeDto>().ForMember(
-            favoriteRecipe => favoriteRecipe.FavoriteRecipeId,
-            opt => opt.MapFrom(fR => string.Join(' ', fR.FavoriteRecipeId))
-        );
+        CreateMap<FavoriteRecipe, FavoriteRecipeDto>();
         
         CreateMap<Recipe, RecipeDto>();
         
-        CreateMap<Step, StepDto>().ForMember(
-            step => step.StepId,
-            opt => opt.MapFrom(s => string.Join(' ', s.StepId))
-        );
+        CreateMap<Step, StepDto>();
     }
 }

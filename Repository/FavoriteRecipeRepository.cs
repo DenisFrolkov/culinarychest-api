@@ -9,13 +9,8 @@ public class FavoriteRecipeRepository : RepositoryBase<FavoriteRecipe>, IFavorit
     public FavoriteRecipeRepository(RepositoryContext repositoryContext) : base(repositoryContext)
     {
     }
-
-    public IEnumerable<FavoriteRecipe> GetAllFavoriteRecipes(bool trackChanges) =>
-        FindAll(trackChanges)
-            .OrderBy(c => c.FavoriteRecipeId)
-            .ToList();
-
-    public FavoriteRecipe GetFavoriteRecipe(int FavoriteRecipeId, bool trackChanges) =>
-        FindByCondition(favoriteRecipe => 
-                favoriteRecipe.FavoriteRecipeId.Equals(FavoriteRecipeId), trackChanges).SingleOrDefault();
+    
+    public IEnumerable<FavoriteRecipe> GetAllFavoriteRecipeForApplicationUser(int authorId, bool trackChanges) =>
+        FindByCondition(favoriteRecipe => favoriteRecipe.AuthorId.Equals(authorId), trackChanges)
+            .OrderBy(e => e.RecipeId);
 }
