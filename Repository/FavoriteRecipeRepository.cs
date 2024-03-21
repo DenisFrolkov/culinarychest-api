@@ -13,4 +13,6 @@ public class FavoriteRecipeRepository : RepositoryBase<FavoriteRecipe>, IFavorit
     public IEnumerable<FavoriteRecipe> GetAllFavoriteRecipeForApplicationUser(int authorId, bool trackChanges) =>
         FindByCondition(favoriteRecipe => favoriteRecipe.AuthorId.Equals(authorId), trackChanges)
             .OrderBy(e => e.RecipeId);
+
+    public void CreateFavoriteRecipe(FavoriteRecipe favoriteRecipe) => Create(favoriteRecipe);
 }

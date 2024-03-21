@@ -1,15 +1,13 @@
 using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace culinarychest_api.Controllers;
 
-// тот атрибут определяет маршрут для контроллера. Здесь [controller] является плейсхолдером,
-// который автоматически заменяется на имя контроллера без суффикса "Controller".
-// Это позволяет легко опред елить маршрут для каждого контроллера без необходимости явно указывать его в атрибуте. 
 [Route("api/applicationUser")]
-[ApiController] //Этот атрибут указывает, что класс является контроллером API
+[ApiController]
 public class ApplicationUserController : ControllerBase
 {
     private readonly IRepositoryManager _repository;
@@ -31,7 +29,7 @@ public class ApplicationUserController : ControllerBase
         return Ok(applicationUserDto);
     }
     
-    [HttpGet("{userId}")]
+    [HttpGet(template: "{userId}", Name = "ApplicationUserByUserId")]
     public IActionResult GetApplicationUser(int userId)
     {
         var applicationUser = _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: false);
@@ -45,6 +43,21 @@ public class ApplicationUserController : ControllerBase
             var applicationUserDto = _mapper.Map<ApplicationUserDto>(applicationUser);
             return Ok(applicationUserDto);
         }
+    }
+
+    [HttpPost]
+    public IActionResult CreateApplicationUsers([FromBody] ApplicationUserForCreationDto applicationUser)
+    {
+        if (applicationUser == null)
+        {
+            _logger.LogError("ApplicationUserForCreationDto object sent from client is null.");
+            return BadRequest("ApplicationUserForCreationDto object is null");
+        }
+        var applicationUserEntity = _mapper.Map<ApplicationUser>(applicationUser);
+        _repository.ApplicationUser.CreateApplicationUser(applicationUserEntity);
+        _repository.Save();
+        var applicationUserToReturn = _mapper.Map<ApplicationUserDto>(applicationUserEntity);
+        return CreatedAtRoute("ApplicationUserByUserId", new { Id = applicationUserToReturn.UserId }, applicationUserToReturn);
     }
 }
 

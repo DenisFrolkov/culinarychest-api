@@ -18,4 +18,6 @@ public class StepRepository : RepositoryBase<Step>, IStepRepository
     public IEnumerable<Step> GetRecipeForAllSteps(int recipeId, bool trackChanges) =>
         FindByCondition(step => step.RecipeId.Equals(recipeId), trackChanges)
             .OrderBy(e => e.StepId);
+
+    public void CreateStep(Step step) => Create(step);
 }

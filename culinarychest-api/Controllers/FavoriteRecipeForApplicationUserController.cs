@@ -21,7 +21,7 @@ public class FavoriteRecipeForApplicationUserController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet(Name = "FavoriteRecipeForApplicationUserByAuthorId")]
     public IActionResult GetFavoriteRecipeForApplicationUser(int authorId)
     {
         var applicationUser = _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);

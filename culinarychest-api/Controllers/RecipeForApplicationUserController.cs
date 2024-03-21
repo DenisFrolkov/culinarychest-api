@@ -20,7 +20,7 @@ public class RecipeForApplicationUserController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet(Name = "RecipeForApplicationUserByAuthorId")]
     public IActionResult GetRecipeForApplicationUser(int authorId)
     {
         var applicationUser = _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
@@ -29,8 +29,8 @@ public class RecipeForApplicationUserController : ControllerBase
             _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
             return NotFound();
         }
-        var recipesFromDb = _repository.Recipe.GetApplicationUserAllRecipes(authorId, trackChanges: false);
-        var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(recipesFromDb);
+        var recipesDb = _repository.Recipe.GetApplicationUserAllRecipes(authorId, trackChanges: false);
+        var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(recipesDb);
         return Ok(recipesDto);
     }
 }

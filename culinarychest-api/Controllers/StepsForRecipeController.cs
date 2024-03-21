@@ -19,7 +19,7 @@ public class StepsForRecipeController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet(Name = "StepsForRecipeByRecipeId")]
     public IActionResult GetStepsForRecipe(int recipeId)
     {
         var recipe = _repository.Recipe.GetRecipe(recipeId, trackChanges: false);

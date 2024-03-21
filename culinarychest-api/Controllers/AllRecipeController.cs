@@ -6,19 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace culinarychest_api.Controllers;
 
-//// тот атрибут определяет маршрут для контроллера. Здесь [controller] является плейсхолдером,
-// // который автоматически заменяется на имя контроллера без суффикса "Controller".
-// // Это позволяет легко определить маршрут для каждого контроллера без необходимости явно указывать его в атрибуте. 
 [Route("api/recipe")]
-[ApiController] //Этот атрибут указывает, что класс является контроллером API
+[ApiController]
 public class RecipeController : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
 
-    public RecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper) //IRepositoryManager и ILoggerManager.
-        //IRepositoryManager используется для доступа к данным, а ILoggerManager для логирования.
+    public RecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
     {
         _repository = repository;
         _logger = logger;
@@ -32,7 +28,7 @@ public class RecipeController : ControllerBase
         return Ok(recipeDto);
     }
     
-    [HttpGet("{recipeId}")]
+    [HttpGet(template: "{recipeId}", Name = "RecipeByRecipeId")]
     public IActionResult GetRecipe(int recipeId)
     {
         var recipe = _repository.Recipe.GetRecipe(recipeId, trackChanges: false);

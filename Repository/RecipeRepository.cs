@@ -22,4 +22,6 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
     public Recipe GetRecipe(int recipeId, bool trackChanges) =>
         FindByCondition(recipe => 
             recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefault();
+
+    public void CreateRecipe(Recipe recipe) => Create(recipe);
 }

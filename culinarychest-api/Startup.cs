@@ -27,6 +27,12 @@ public class Startup
         services.AddControllers(); //предполагает вызов метода расширения для настройки сервиса логирования
         services.ConfigureSqlContext(Configuration); //предполагает вызов метода расширения для настройки контекста базы данных SQL
         services.AddAutoMapper(typeof(Startup));
+        services.AddControllers(configure =>
+            {
+                configure.RespectBrowserAcceptHeader = true;
+                configure.ReturnHttpNotAcceptable = true;
+            }
+        ).AddXmlDataContractSerializerFormatters();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger) { //это метод, где вы настраиваете конвейер обработки HTTP-запросов. В этом методе:

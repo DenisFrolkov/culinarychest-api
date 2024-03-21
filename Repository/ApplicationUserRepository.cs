@@ -22,4 +22,6 @@ public class ApplicationUserRepository : RepositoryBase<ApplicationUser>, IAppli
     public ApplicationUser GetApplicationUser(int userId, bool trackChanges) => 
         FindByCondition(applicationUser => 
             applicationUser.UserId.Equals(userId), trackChanges).SingleOrDefault();
+
+    public void CreateApplicationUser(ApplicationUser applicationUser) => Create(applicationUser);
 }
