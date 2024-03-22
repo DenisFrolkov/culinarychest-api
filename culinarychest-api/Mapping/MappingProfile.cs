@@ -16,9 +16,9 @@ public class MappingProfile : Profile
         CreateMap<Recipe, RecipeDto>();
         CreateMap<Step, StepDto>();
 
-        CreateMap<ApplicationUserForCreationDto, ApplicationUser>();
-        CreateMap<FavoriteRecipeForCreationDto, FavoriteRecipe>();
-        CreateMap<RecipeForCreationDto, Recipe>();
-        CreateMap<StepForCreationDto, Step>();
+        CreateMap<CreateApplicationUserDto, ApplicationUser>();
+        CreateMap<CreateFavoriteRecipeDto, FavoriteRecipe>();
+        CreateMap<CreateRecipeDto, Recipe>();
+        CreateMap<CreateStepsDto, Step>();
     }
 }

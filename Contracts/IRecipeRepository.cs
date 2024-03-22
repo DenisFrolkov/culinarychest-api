@@ -4,9 +4,9 @@ namespace Contracts;
 
 public interface IRecipeRepository
 {
-    IEnumerable<Recipe> GetAllRecipes(bool trackChanges);
-    IEnumerable<Recipe> GetApplicationUserAllRecipes(int authorId ,bool trackChanges);
+    IEnumerable<Recipe> GetRecipes(bool trackChanges);
+    IEnumerable<Recipe> GetApplicationUserRecipes(int authorId ,bool trackChanges);
     Recipe GetRecipe(int recipeId, bool trackChanges);
-    void CreateRecipe(Recipe recipe);
+    void CreateApplicationUserRecipe(int authorId, Recipe recipe);
 
 }

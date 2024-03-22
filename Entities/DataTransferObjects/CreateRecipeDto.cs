@@ -2,9 +2,8 @@ using Entities.Models;
 
 namespace Entities.DataTransferObjects;
 
-public class RecipeForCreationDto
+public class CreateRecipeDto
 {
-    public int AuthorId { get; set; }
     public string Title { get; set; }
     public byte[] RecipeImage { get; set; }
     public string Ingredients { get; set; }

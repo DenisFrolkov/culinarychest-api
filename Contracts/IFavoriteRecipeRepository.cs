@@ -4,7 +4,7 @@ namespace Contracts;
 
 public interface IFavoriteRecipeRepository
 {
-    IEnumerable<FavoriteRecipe> GetAllFavoriteRecipeForApplicationUser(int authorId, bool trackChanges);
+    IEnumerable<FavoriteRecipe> GetApplicationUserFavoriteRecipes(int authorId, bool trackChanges);
 
-    void CreateFavoriteRecipe(FavoriteRecipe favoriteRecipe);
+    void CreateApplicationUserFavoriteRecipe(int authorId, int recipeId,  FavoriteRecipe favoriteRecipe);
 }

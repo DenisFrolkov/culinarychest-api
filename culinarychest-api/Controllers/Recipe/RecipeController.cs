@@ -21,9 +21,9 @@ public class RecipeController : ControllerBase
         _mapper = mapper;
     }
     
-    public IActionResult GetAllRecipes()
+    public IActionResult GetRecipes()
     {
-        var recipe = _repository.Recipe.GetAllRecipes(trackChanges: false);
+        var recipe = _repository.Recipe.GetRecipes(trackChanges: false);
         var recipeDto = _mapper.Map<IEnumerable<RecipeDto>>(recipe);
         return Ok(recipeDto);
     }
@@ -42,6 +42,7 @@ public class RecipeController : ControllerBase
             var recipeDto = _mapper.Map<RecipeDto>(recipe);
             return Ok(recipeDto);
         }
-
     }
+    
+    
 }

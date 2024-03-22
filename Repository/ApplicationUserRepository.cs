@@ -14,10 +14,6 @@ public class ApplicationUserRepository : RepositoryBase<ApplicationUser>, IAppli
     //Этот контекст передается в базовый класс RepositoryBase<T> через вызов base(repositoryContext),
     //что позволяет ApplicationUserRepository использовать базовую реализацию операций CRUD для сущностей типа ApplicationUser
     public ApplicationUserRepository(RepositoryContext repositoryContext) : base(repositoryContext){  }
-    public IEnumerable<ApplicationUser> GetAllApplicationUsers(bool trackChanges) =>
-        FindAll(trackChanges)
-            .OrderBy(c => c.UserId)
-            .ToList();
 
     public ApplicationUser GetApplicationUser(int userId, bool trackChanges) => 
         FindByCondition(applicationUser => 

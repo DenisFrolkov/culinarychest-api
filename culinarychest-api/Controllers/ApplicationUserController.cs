@@ -21,15 +21,7 @@ public class ApplicationUserController : ControllerBase
         _mapper = mapper;
     }
     
-    [HttpGet]
-    public IActionResult GetApplicationUsers()
-    {
-        var applicationUsers = _repository.ApplicationUser.GetAllApplicationUsers(trackChanges: false);
-        var applicationUserDto = _mapper.Map<IEnumerable<ApplicationUserDto>>(applicationUsers);
-        return Ok(applicationUserDto);
-    }
-    
-    [HttpGet(template: "{userId}", Name = "ApplicationUserByUserId")]
+    [HttpGet(template: "{userId}", Name = "GetApplicationUserByUserId")]
     public IActionResult GetApplicationUser(int userId)
     {
         var applicationUser = _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: false);
@@ -46,18 +38,18 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateApplicationUsers([FromBody] ApplicationUserForCreationDto applicationUser)
+    public IActionResult CreateApplicationUser([FromBody] CreateApplicationUserDto createApplicationUser)
     {
-        if (applicationUser == null)
+        if (createApplicationUser == null)
         {
             _logger.LogError("ApplicationUserForCreationDto object sent from client is null.");
             return BadRequest("ApplicationUserForCreationDto object is null");
         }
-        var applicationUserEntity = _mapper.Map<ApplicationUser>(applicationUser);
+        var applicationUserEntity = _mapper.Map<ApplicationUser>(createApplicationUser);
         _repository.ApplicationUser.CreateApplicationUser(applicationUserEntity);
         _repository.Save();
         var applicationUserToReturn = _mapper.Map<ApplicationUserDto>(applicationUserEntity);
-        return CreatedAtRoute("ApplicationUserByUserId", new { Id = applicationUserToReturn.UserId }, applicationUserToReturn);
+        return CreatedAtRoute("GetApplicationUserByUserId", new { Id = applicationUserToReturn.UserId }, applicationUserToReturn);
     }
 }
 

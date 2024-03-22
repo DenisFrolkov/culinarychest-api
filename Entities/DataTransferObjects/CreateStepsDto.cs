@@ -1,6 +1,6 @@
 namespace Entities.DataTransferObjects;
 
-public class StepForCreationDto
+public class CreateStepsDto
 {
     public string Description { get; set; }
     public int Order { get; set; }

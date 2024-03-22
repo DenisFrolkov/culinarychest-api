@@ -1,6 +1,6 @@
 namespace Entities.DataTransferObjects;
 
-public class ApplicationUserForCreationDto
+public class CreateApplicationUserDto
 {
     public string Login { get; set; }
     public string Email { get; set; }
