@@ -19,5 +19,9 @@ public class StepRepository : RepositoryBase<Step>, IStepRepository
         FindByCondition(step => step.RecipeId.Equals(recipeId), trackChanges)
             .OrderBy(e => e.StepId);
 
-    public void CreateStep(Step step) => Create(step);
+    public void CreateRecipeStep(int recipeId, Step step)
+    {
+        step.RecipeId = recipeId;
+        Create(step);
+    }
 }

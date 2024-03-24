@@ -5,5 +5,5 @@ namespace Contracts;
 public interface IStepRepository
 {
     IEnumerable<Step> GetRecipeForSteps(int recipeId, bool trackChanges);
-    void CreateStep(Step step);
+    void CreateRecipeStep(int recipeId, Step step);
 }
