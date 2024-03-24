@@ -19,6 +19,10 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
         FindByCondition(recipe => 
             recipe.AuthorId.Equals(authorId), trackChanges).OrderBy(e => e.Title);
 
+    public Recipe GetApplicationUserRecipe(int authorId, int recipeId, bool trackChanges) =>
+        FindByCondition(recipe => 
+            recipe.AuthorId.Equals(authorId) && recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefault();
+
     public Recipe GetRecipe(int recipeId, bool trackChanges) =>
         FindByCondition(recipe => 
             recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefault();
@@ -27,5 +31,9 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
     {
         recipe.AuthorId = authorId;
         Create(recipe);
+    }
+    public void DeleteRecipe(Recipe recipe)
+    {
+        Delete(recipe);
     }
 }

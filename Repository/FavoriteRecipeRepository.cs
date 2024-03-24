@@ -14,10 +14,20 @@ public class FavoriteRecipeRepository : RepositoryBase<FavoriteRecipe>, IFavorit
         FindByCondition(favoriteRecipe => favoriteRecipe.AuthorId.Equals(authorId), trackChanges)
             .OrderBy(e => e.RecipeId);
 
+    public FavoriteRecipe GetApplicationUserFavoriteRecipe(int authorId, int favoriteRecipeId, bool trackChanges) =>
+        FindByCondition(favoriteRecipe => 
+                favoriteRecipe.AuthorId.Equals(authorId) && favoriteRecipe.FavoriteRecipeId.Equals(favoriteRecipeId), trackChanges)
+            .SingleOrDefault();
+
     public void CreateApplicationUserFavoriteRecipe(int authorId, int recipeId, FavoriteRecipe favoriteRecipe)
     {
         favoriteRecipe.AuthorId = authorId;
         favoriteRecipe.RecipeId = recipeId;
         Create(favoriteRecipe);
+    }
+
+    public void DeleteFavoriteRecipe(FavoriteRecipe favoriteRecipe)
+    {
+        Delete(favoriteRecipe);
     }
 }

@@ -60,4 +60,25 @@ public class ApplicationUserRecipeController : ControllerBase
             authorId, id = recipeToReturn.RecipeId
         }, recipeToReturn);
     }
+
+    [HttpDelete("{recipeId}")]
+    public IActionResult DeleteApplicationUserRecipe(int authorId, int recipeId)
+    {
+        var applicationUser = _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
+        if (applicationUser == null)
+        {
+            _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
+            return NotFound();
+        }
+        var applicationUserRecipe =
+            _repository.Recipe.GetApplicationUserRecipe(authorId, recipeId, trackChanges: false);
+        if (applicationUserRecipe == null)
+        {
+            _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
+            return NotFound();
+        }
+        _repository.Recipe.DeleteRecipe(applicationUserRecipe);
+        _repository.Save();
+        return NoContent();
+    }
 }

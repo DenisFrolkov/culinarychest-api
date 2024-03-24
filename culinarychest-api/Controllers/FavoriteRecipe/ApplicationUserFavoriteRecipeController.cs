@@ -35,4 +35,26 @@ public class ApplicationUserFavoriteRecipeController : ControllerBase
         var favoriteRecipeDto = _mapper.Map<IEnumerable<FavoriteRecipeDto>>(favoriteRecipeFromDb);
         return Ok(favoriteRecipeDto);
     }
+    
+    [HttpDelete("{favoriteRecipeId}")]
+    public IActionResult DeleteApplicationUserFavoriteRecipe(int authorId, int favoriteRecipeId)
+    {
+        var applicationUser = _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
+        if (applicationUser == null)
+        {
+            _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
+            return NotFound();
+        }
+        
+        var applicationUserFavoriteRecipe =
+            _repository.FavoriteRecipe.GetApplicationUserFavoriteRecipe(authorId, favoriteRecipeId, trackChanges: false);
+        if (applicationUserFavoriteRecipe == null)
+        {
+            _logger.LogInfo($"FavoriteRecipe with id: {favoriteRecipeId} doesn't exist in the database.");
+            return NotFound();
+        }
+        _repository.FavoriteRecipe.DeleteFavoriteRecipe(applicationUserFavoriteRecipe);
+        _repository.Save();
+        return NoContent();
+    }
 }
