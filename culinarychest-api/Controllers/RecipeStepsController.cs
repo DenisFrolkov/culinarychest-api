@@ -32,7 +32,7 @@ public class RecipeStepsController : ControllerBase
             return NotFound();
         }
 
-        var stepsFromDb = _repository.Step.GetRecipeForSteps(recipeId, trackChanges: false);
+        var stepsFromDb = _repository.Step.GetRecipeSteps(recipeId, trackChanges: false);
         var stepDto = _mapper.Map<IEnumerable<StepDto>>(stepsFromDb);
         return Ok(stepDto);
     }
@@ -61,5 +61,33 @@ public class RecipeStepsController : ControllerBase
         {
             recipeId, id = stepToReturn.StepId
         }, stepToReturn);
+    }
+
+    [HttpPut("{stepId}")]
+    public IActionResult UpdateRecipeStep(int recipeId, int stepId, [FromBody] UpdateStepDto step)
+    {
+        if (step == null)
+        {
+            _logger.LogError("UpdateStepDto object sent from client is null.");
+            return BadRequest("UpdateStepDto object is null");
+        }
+
+        var recipe = _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        if (recipe == null)
+        {
+            _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
+            return NotFound();
+        }
+
+        var stepEntity = _repository.Step.GetStep(stepId, trackChanges: true);
+        if (stepEntity == null)
+        {
+            _logger.LogInfo($"Step with id: {stepId} doesn't exist in the database.");
+            return NotFound();
+        }
+
+        _mapper.Map(step, stepEntity);
+        _repository.Save();
+        return NoContent();
     }
 }

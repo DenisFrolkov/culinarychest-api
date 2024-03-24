@@ -20,5 +20,9 @@ public class MappingProfile : Profile
         CreateMap<CreateFavoriteRecipeDto, FavoriteRecipe>();
         CreateMap<CreateRecipeDto, Recipe>();
         CreateMap<CreateStepsDto, Step>();
+
+        CreateMap<UpdateApplicationUserDto, ApplicationUser>();
+        CreateMap<UpdateRecipeDto, Recipe>();
+        CreateMap<UpdateStepDto, Step>();
     }
 }

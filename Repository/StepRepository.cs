@@ -15,7 +15,11 @@ public class StepRepository : RepositoryBase<Step>, IStepRepository
             .OrderBy(c => c.RecipeId)
             .ToList();
 
-    public IEnumerable<Step> GetRecipeForSteps(int recipeId, bool trackChanges) =>
+    public Step GetStep(int stepId, bool trackChanges) =>
+        FindByCondition(step => 
+            step.StepId.Equals(stepId), trackChanges).SingleOrDefault();
+    
+    public IEnumerable<Step> GetRecipeSteps(int recipeId, bool trackChanges) =>
         FindByCondition(step => step.RecipeId.Equals(recipeId), trackChanges)
             .OrderBy(e => e.StepId);
 

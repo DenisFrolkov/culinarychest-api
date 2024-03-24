@@ -81,4 +81,32 @@ public class ApplicationUserRecipeController : ControllerBase
         _repository.Save();
         return NoContent();
     }
+
+    [HttpPut("{recipeId}")]
+    public IActionResult UpdateApplicationUserRecipe(int authorId, int recipeId, [FromBody] UpdateRecipeDto recipe)
+    {
+        if (recipe == null)
+        {
+            _logger.LogError("UpdateRecipeDto object sent from client is null.");
+            return BadRequest("UpdateRecipeDto object is null");
+        }
+
+        var applicationUser = _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
+        if (applicationUser == null)
+        {
+            _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
+            return NotFound();
+        }
+
+        var recipeEntity = _repository.Recipe.GetRecipe(recipeId, trackChanges: true);
+        if (recipeEntity == null)
+        {
+            _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
+            return NotFound();
+        }
+
+        _mapper.Map(recipe, recipeEntity);
+        _repository.Save();
+        return NoContent();
+    }
 }

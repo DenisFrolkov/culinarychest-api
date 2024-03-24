@@ -20,4 +20,8 @@ public class ApplicationUserRepository : RepositoryBase<ApplicationUser>, IAppli
             applicationUser.UserId.Equals(userId), trackChanges).SingleOrDefault();
 
     public void CreateApplicationUser(ApplicationUser applicationUser) => Create(applicationUser);
+    public void DeleteApplicationUser(ApplicationUser applicationUser)
+    {
+        Delete(applicationUser);
+    }
 }
