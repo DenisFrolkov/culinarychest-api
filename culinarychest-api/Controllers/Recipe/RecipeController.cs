@@ -43,6 +43,4 @@ public class RecipeController : ControllerBase
             return Ok(recipeDto);
         }
     }
-    
-    
 }
