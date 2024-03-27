@@ -24,7 +24,7 @@ public class WeatherForecastController : ControllerBase //класс WeatherFore
         //Метод Get возвращает массив строк. В данном примере, метод выполняет операции создания, обновления и удаления
         //сущностей через репозиторий, но результаты этих операций не используются.
     {
-        _repository.Save();
+        _repository.SaveAsync();
         
         return new string[] { "value1", "value2" };
     }

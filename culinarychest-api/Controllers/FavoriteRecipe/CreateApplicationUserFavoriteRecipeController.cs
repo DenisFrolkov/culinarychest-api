@@ -23,7 +23,7 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
     }
     
     [HttpPost]
-    public IActionResult CreateApplicationUserFavoriteRecipe(int authorId, int recipeId, [FromBody] CreateFavoriteRecipeDto favoriteRecipe)
+    public async Task<IActionResult> CreateApplicationUserFavoriteRecipe(int authorId, int recipeId, [FromBody] CreateFavoriteRecipeDtoDto favoriteRecipe)
     {
         if (favoriteRecipe == null)
         {
@@ -31,22 +31,28 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
             return BadRequest("CreateFavoriteRecipeDto object is null"); 
         }
 
-        var applicationUser = _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
+        var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
         {
             _logger.LogInfo($"Company with id: {authorId} doesn't exist in the database.");
             return NotFound();
         }
-        var recipe = _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
+
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError("Invalid model state for the CreateFavoriteRecipeDto object");
+            return UnprocessableEntity(ModelState);
+        }
         
         var favoriteRecipeEntity = _mapper.Map<FavoriteRecipe>(favoriteRecipe);
-        _repository.FavoriteRecipe.CreateApplicationUserFavoriteRecipe(authorId, recipeId, favoriteRecipeEntity);
-        _repository.Save();
+         _repository.FavoriteRecipe.CreateApplicationUserFavoriteRecipe(authorId, recipeId, favoriteRecipeEntity);
+        await _repository.SaveAsync();
         var favoriteRecipeToReturn = _mapper.Map<FavoriteRecipeDto>(favoriteRecipeEntity);
         return CreatedAtRoute("GetFavoriteRecipeForApplicationUserByAuthorId", new
         {

@@ -1,6 +1,7 @@
 using Contracts;
 using culinarychest_api.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using NLog;
 
 namespace culinarychest_api;
@@ -33,6 +34,10 @@ public class Startup
                 configure.ReturnHttpNotAcceptable = true;
             }
         ).AddXmlDataContractSerializerFormatters();
+        services.Configure<ApiBehaviorOptions>(options =>
+        {
+            options.SuppressModelStateInvalidFilter = true;
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger) { //это метод, где вы настраиваете конвейер обработки HTTP-запросов. В этом методе:

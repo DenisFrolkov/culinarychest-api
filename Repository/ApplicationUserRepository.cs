@@ -1,6 +1,7 @@
 using Contracts;
 using Entities;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
@@ -15,9 +16,9 @@ public class ApplicationUserRepository : RepositoryBase<ApplicationUser>, IAppli
     //что позволяет ApplicationUserRepository использовать базовую реализацию операций CRUD для сущностей типа ApplicationUser
     public ApplicationUserRepository(RepositoryContext repositoryContext) : base(repositoryContext){  }
 
-    public ApplicationUser GetApplicationUser(int userId, bool trackChanges) => 
-        FindByCondition(applicationUser => 
-            applicationUser.UserId.Equals(userId), trackChanges).SingleOrDefault();
+    public async Task<ApplicationUser> GetApplicationUser(int userId, bool trackChanges) => 
+        await FindByCondition(applicationUser => 
+            applicationUser.UserId.Equals(userId), trackChanges).SingleOrDefaultAsync();
 
     public void CreateApplicationUser(ApplicationUser applicationUser) => Create(applicationUser);
     public void DeleteApplicationUser(ApplicationUser applicationUser)

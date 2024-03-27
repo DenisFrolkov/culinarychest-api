@@ -23,22 +23,22 @@ public class RecipeStepsController : ControllerBase
     }
 
     [HttpGet(Name = "GetRecipeStepsByRecipeId")]
-    public IActionResult GetRecipeSteps(int recipeId)
+    public async Task<IActionResult> GetRecipeSteps(int recipeId)
     {
-        var recipe = _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"ApplicationUser with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
 
-        var stepsFromDb = _repository.Step.GetRecipeSteps(recipeId, trackChanges: false);
+        var stepsFromDb = await _repository.Step.GetRecipeSteps(recipeId, trackChanges: false);
         var stepDto = _mapper.Map<IEnumerable<StepDto>>(stepsFromDb);
         return Ok(stepDto);
     }
 
     [HttpPost]
-    public IActionResult CreateRecipeSteps(int recipeId, [FromBody] CreateStepsDto step)
+    public async Task<IActionResult> CreateRecipeSteps(int recipeId, [FromBody] CreateStepsDto step)
     {
         if (step == null)
         {
@@ -46,16 +46,22 @@ public class RecipeStepsController : ControllerBase
             return BadRequest("CreateStepsDto object is null");
         }
 
-        var recipe = _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
+        
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError("Invalid model state for the CreateStepsDto object");
+            return UnprocessableEntity(ModelState);
+        }
 
         var stepEntity = _mapper.Map<Step>(step);
         _repository.Step.CreateRecipeStep(recipeId, stepEntity);
-        _repository.Save();
+        await _repository.SaveAsync();
         var stepToReturn = _mapper.Map<StepDto>(stepEntity);
         return CreatedAtRoute("GetRecipeStepsByRecipeId", new
         {
@@ -64,7 +70,7 @@ public class RecipeStepsController : ControllerBase
     }
 
     [HttpPut("{stepId}")]
-    public IActionResult UpdateRecipeStep(int recipeId, int stepId, [FromBody] UpdateStepDto step)
+    public async Task<IActionResult> UpdateRecipeStep(int recipeId, int stepId, [FromBody] UpdateStepDto step)
     {
         if (step == null)
         {
@@ -72,22 +78,28 @@ public class RecipeStepsController : ControllerBase
             return BadRequest("UpdateStepDto object is null");
         }
 
-        var recipe = _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
 
-        var stepEntity = _repository.Step.GetStep(stepId, trackChanges: true);
+        var stepEntity = await _repository.Step.GetStep(stepId, trackChanges: true);
         if (stepEntity == null)
         {
             _logger.LogInfo($"Step with id: {stepId} doesn't exist in the database.");
             return NotFound();
         }
+        
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError("Invalid model state for the UpdateStepDto object");
+            return UnprocessableEntity(ModelState);
+        }
 
         _mapper.Map(step, stepEntity);
-        _repository.Save();
+        await _repository.SaveAsync();
         return NoContent();
     }
 }

@@ -63,6 +63,5 @@ public class RepositoryManager : IRepositoryManager
         }
     }
 
-    public void Save() => _repositoryContext.SaveChanges(); //вызывает метод SaveChanges на контексте базы данных,
-                                                            //который сохраняет все изменения, сделанные в репозиториях, в базу данных
+    public Task SaveAsync() => _repositoryContext.SaveChangesAsync(); 
 }

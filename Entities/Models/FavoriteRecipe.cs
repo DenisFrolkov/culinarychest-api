@@ -12,6 +12,7 @@ public class FavoriteRecipe
     public int AuthorId { get; set; }
     [Required]
     public int RecipeId { get; set; }
+    [Required(ErrorMessage = "Data is required.")]
     public DateTime AddedDate { get; set; }
     [ForeignKey("AuthorId")]
     public ApplicationUser Author { get; set; }

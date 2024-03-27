@@ -16,12 +16,12 @@ public class MappingProfile : Profile
         CreateMap<Recipe, RecipeDto>();
         CreateMap<Step, StepDto>();
 
-        CreateMap<CreateApplicationUserDto, ApplicationUser>();
-        CreateMap<CreateFavoriteRecipeDto, FavoriteRecipe>();
+        CreateMap<CreateApplicationUserDtoDto, ApplicationUser>();
+        CreateMap<CreateFavoriteRecipeDtoDto, FavoriteRecipe>();
         CreateMap<CreateRecipeDto, Recipe>();
         CreateMap<CreateStepsDto, Step>();
 
-        CreateMap<UpdateApplicationUserDto, ApplicationUser>();
+        CreateMap<UpdateApplicationUserDtoDto, ApplicationUser>();
         CreateMap<UpdateRecipeDto, Recipe>();
         CreateMap<UpdateStepDto, Step>();
     }

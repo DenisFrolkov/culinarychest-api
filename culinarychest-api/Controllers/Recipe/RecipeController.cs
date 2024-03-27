@@ -21,17 +21,17 @@ public class RecipeController : ControllerBase
         _mapper = mapper;
     }
     
-    public IActionResult GetRecipes()
+    public async Task<IActionResult> GetRecipes()
     {
-        var recipe = _repository.Recipe.GetRecipes(trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipes(trackChanges: false);
         var recipeDto = _mapper.Map<IEnumerable<RecipeDto>>(recipe);
         return Ok(recipeDto);
     }
     
     [HttpGet(template: "{recipeId}", Name = "RecipeByRecipeId")]
-    public IActionResult GetRecipe(int recipeId)
+    public async Task<IActionResult> GetRecipe(int recipeId)
     {
-        var recipe = _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");

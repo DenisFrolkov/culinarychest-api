@@ -23,9 +23,9 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpGet(template: "{userId}", Name = "GetApplicationUserByUserId")]
-    public IActionResult GetApplicationUser(int userId)
+    public async Task<IActionResult> GetApplicationUser(int userId)
     {
-        var applicationUser = _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: false);
+        var applicationUser = await _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: false);
         if (applicationUser == null)
         {
             _logger.LogInfo($"ApplicationUser with id: {userId} doesn't exist in the database.");
@@ -39,38 +39,44 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateApplicationUser([FromBody] CreateApplicationUserDto createApplicationUser)
+    public async Task<IActionResult> CreateApplicationUser([FromBody] CreateApplicationUserDtoDto createApplicationUser)
     {
         if (createApplicationUser == null)
         {
             _logger.LogError("ApplicationUserForCreationDto object sent from client is null.");
             return BadRequest("ApplicationUserForCreationDto object is null");
         }
+        
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError("Invalid model state for the CreateApplicationUserDto object");
+            return UnprocessableEntity(ModelState);
+        }
 
         var applicationUserEntity = _mapper.Map<ApplicationUser>(createApplicationUser);
         _repository.ApplicationUser.CreateApplicationUser(applicationUserEntity);
-        _repository.Save();
+        await _repository.SaveAsync();
         var applicationUserToReturn = _mapper.Map<ApplicationUserDto>(applicationUserEntity);
         return CreatedAtRoute("GetApplicationUserByUserId", new { Id = applicationUserToReturn.UserId },
             applicationUserToReturn);
     }
 
     [HttpDelete("{userId}")]
-    public IActionResult DeleteApplicationUser(int userId)
+    public async Task<IActionResult> DeleteApplicationUser(int userId)
     {
-        var applicationUser = _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: false);
+        var applicationUser = await _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: false);
         if (applicationUser == null)
         {
             _logger.LogInfo($"ApplicationUser with id: {userId} doesn't exist in the database.");
             return NotFound();
         }   
         _repository.ApplicationUser.DeleteApplicationUser(applicationUser);
-        _repository.Save();
+        await _repository.SaveAsync();
         return NoContent();
     }
 
     [HttpPut("{userId}")]
-    public IActionResult UpdateApplicationUser(int userId, [FromBody] UpdateApplicationUserDto applicationUser)
+    public async Task<IActionResult> UpdateApplicationUser(int userId, [FromBody] UpdateApplicationUserDtoDto applicationUser)
     {
         if (applicationUser == null)
         {
@@ -78,15 +84,21 @@ public class ApplicationUserController : ControllerBase
             return BadRequest("UpdateApplicationUserDto object is null"); 
         }
 
-        var applicationUserEntity = _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: true);
+        var applicationUserEntity = await _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: true);
         if (applicationUserEntity == null)
         {
             _logger.LogInfo($"ApplicationUser with id: {userId} doesn't exist in the database.");
             return NotFound();
         }
+        
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError("Invalid model state for the UpdateApplicationUserDto object");
+            return UnprocessableEntity(ModelState);
+        }
 
         _mapper.Map(applicationUser, applicationUserEntity);
-        _repository.Save();
+        await _repository.SaveAsync();
         return NoContent();
     }
 }

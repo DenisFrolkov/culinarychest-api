@@ -1,6 +1,7 @@
 using Contracts;
 using Entities;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
@@ -10,14 +11,15 @@ public class FavoriteRecipeRepository : RepositoryBase<FavoriteRecipe>, IFavorit
     {
     }
     
-    public IEnumerable<FavoriteRecipe> GetApplicationUserFavoriteRecipes(int authorId, bool trackChanges) =>
-        FindByCondition(favoriteRecipe => favoriteRecipe.AuthorId.Equals(authorId), trackChanges)
-            .OrderBy(e => e.RecipeId);
+    public async Task<List<FavoriteRecipe>> GetApplicationUserFavoriteRecipes(int authorId, bool trackChanges) =>
+        await FindByCondition(favoriteRecipe => favoriteRecipe.AuthorId.Equals(authorId), trackChanges)
+            .OrderBy(e => e.RecipeId)
+            .ToListAsync();
 
-    public FavoriteRecipe GetApplicationUserFavoriteRecipe(int authorId, int favoriteRecipeId, bool trackChanges) =>
-        FindByCondition(favoriteRecipe => 
+    public async Task<FavoriteRecipe> GetApplicationUserFavoriteRecipe(int authorId, int favoriteRecipeId, bool trackChanges) =>
+        await FindByCondition(favoriteRecipe => 
                 favoriteRecipe.AuthorId.Equals(authorId) && favoriteRecipe.FavoriteRecipeId.Equals(favoriteRecipeId), trackChanges)
-            .SingleOrDefault();
+            .SingleOrDefaultAsync();
 
     public void CreateApplicationUserFavoriteRecipe(int authorId, int recipeId, FavoriteRecipe favoriteRecipe)
     {

@@ -22,21 +22,21 @@ public class ApplicationUserRecipeController : ControllerBase
     }
 
     [HttpGet(Name = "GetApplicationUserRecipesByAuthorId")]
-    public IActionResult GetApplicationUserRecipes(int authorId)
+    public async Task<IActionResult> GetApplicationUserRecipes(int authorId)
     {
-        var applicationUser = _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
+        var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
         {
             _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
             return NotFound();
         }
-        var recipesDb = _repository.Recipe.GetApplicationUserRecipes(authorId, trackChanges: false);
+        var recipesDb = await _repository.Recipe.GetApplicationUserRecipes(authorId, trackChanges: false);
         var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(recipesDb);
         return Ok(recipesDto);
     }
 
     [HttpPost]
-    public IActionResult CreateApplicationUserRecipe(int authorId, [FromBody] CreateRecipeDto recipe)
+    public async Task<IActionResult> CreateApplicationUserRecipe(int authorId, [FromBody] CreateRecipeDto recipe)
     {
         if (recipe == null)
         {
@@ -44,16 +44,22 @@ public class ApplicationUserRecipeController : ControllerBase
             return BadRequest("CreateRecipeDto object is null"); 
         }
 
-        var applicationUser = _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
+        var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
         {
             _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
             return NotFound();
         }
+        
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError("Invalid model state for the CreateRecipeDto object");
+            return UnprocessableEntity(ModelState);
+        }
 
         var recipeEntity = _mapper.Map<Recipe>(recipe);
         _repository.Recipe.CreateApplicationUserRecipe(authorId, recipeEntity);
-        _repository.Save();
+        await _repository.SaveAsync();
         var recipeToReturn = _mapper.Map<RecipeDto>(recipeEntity);
         return CreatedAtRoute("GetApplicationUserRecipesByAuthorId", new
         {
@@ -62,28 +68,28 @@ public class ApplicationUserRecipeController : ControllerBase
     }
 
     [HttpDelete("{recipeId}")]
-    public IActionResult DeleteApplicationUserRecipe(int authorId, int recipeId)
+    public async Task<IActionResult> DeleteApplicationUserRecipe(int authorId, int recipeId)
     {
-        var applicationUser = _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
+        var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
         {
             _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
             return NotFound();
         }
-        var applicationUserRecipe =
-            _repository.Recipe.GetApplicationUserRecipe(authorId, recipeId, trackChanges: false);
+        var applicationUserRecipe = 
+            await _repository.Recipe.GetApplicationUserRecipe(authorId, recipeId, trackChanges: false);
         if (applicationUserRecipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
         _repository.Recipe.DeleteRecipe(applicationUserRecipe);
-        _repository.Save();
+        await _repository.SaveAsync();
         return NoContent();
     }
 
     [HttpPut("{recipeId}")]
-    public IActionResult UpdateApplicationUserRecipe(int authorId, int recipeId, [FromBody] UpdateRecipeDto recipe)
+    public async Task<IActionResult> UpdateApplicationUserRecipe(int authorId, int recipeId, [FromBody] UpdateRecipeDto recipe)
     {
         if (recipe == null)
         {
@@ -91,22 +97,28 @@ public class ApplicationUserRecipeController : ControllerBase
             return BadRequest("UpdateRecipeDto object is null");
         }
 
-        var applicationUser = _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
+        var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
         {
             _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
             return NotFound();
         }
 
-        var recipeEntity = _repository.Recipe.GetRecipe(recipeId, trackChanges: true);
+        var recipeEntity = await _repository.Recipe.GetRecipe(recipeId, trackChanges: true);
         if (recipeEntity == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
+        
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError("Invalid model state for the UpdateRecipeDto object");
+            return UnprocessableEntity(ModelState);
+        }
 
         _mapper.Map(recipe, recipeEntity);
-        _repository.Save();
+        await _repository.SaveAsync();
         return NoContent();
     }
 }

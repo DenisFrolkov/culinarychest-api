@@ -9,6 +9,5 @@ public interface IRepositoryManager
     IFavoriteRecipeRepository FavoriteRecipe { get; }
     IRecipeRepository Recipe { get; }
     IStepRepository Step { get; }
-    void Save(); //метод предназначен для сохранения всех изменений, сделанных в репозиториях, в базу данных.
-                 //Это может включать в себя операции создания, обновления и удаления сущностей.
+    Task SaveAsync();
 }

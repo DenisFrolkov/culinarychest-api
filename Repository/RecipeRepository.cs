@@ -1,6 +1,7 @@
 using Contracts;
 using Entities;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
@@ -10,22 +11,22 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
     {
     }
 
-    public IEnumerable<Recipe> GetRecipes(bool trackChanges) =>
-        FindAll(trackChanges)
+    public async Task<List<Recipe>> GetRecipes(bool trackChanges) =>
+        await FindAll(trackChanges)
             .OrderBy(c => c.RecipeId)
-            .ToList();
+            .ToListAsync();
 
-    public IEnumerable<Recipe> GetApplicationUserRecipes(int authorId, bool trackChanges) =>
-        FindByCondition(recipe => 
-            recipe.AuthorId.Equals(authorId), trackChanges).OrderBy(e => e.Title);
+    public async Task<List<Recipe>> GetApplicationUserRecipes(int authorId, bool trackChanges) =>
+        await FindByCondition(recipe => 
+            recipe.AuthorId.Equals(authorId), trackChanges).OrderBy(e => e.Title).ToListAsync();
 
-    public Recipe GetApplicationUserRecipe(int authorId, int recipeId, bool trackChanges) =>
-        FindByCondition(recipe => 
-            recipe.AuthorId.Equals(authorId) && recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefault();
+    public async Task<Recipe> GetApplicationUserRecipe(int authorId, int recipeId, bool trackChanges) =>
+        await FindByCondition(recipe => 
+            recipe.AuthorId.Equals(authorId) && recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefaultAsync();
 
-    public Recipe GetRecipe(int recipeId, bool trackChanges) =>
-        FindByCondition(recipe => 
-            recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefault();
+    public async Task<Recipe> GetRecipe(int recipeId, bool trackChanges) =>
+        await FindByCondition(recipe => 
+            recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefaultAsync();
 
     public void CreateApplicationUserRecipe(int authorId, Recipe recipe)
     {
