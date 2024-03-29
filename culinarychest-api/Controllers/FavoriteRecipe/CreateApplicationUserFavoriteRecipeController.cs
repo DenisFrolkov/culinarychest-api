@@ -1,5 +1,6 @@
 using AutoMapper;
 using Contracts;
+using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -23,14 +24,9 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
     }
     
     [HttpPost]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateApplicationUserFavoriteRecipe(int authorId, int recipeId, [FromBody] CreateFavoriteRecipeDtoDto favoriteRecipe)
     {
-        if (favoriteRecipe == null)
-        {
-            _logger.LogError("CreateFavoriteRecipeDto object sent from client is null.");
-            return BadRequest("CreateFavoriteRecipeDto object is null"); 
-        }
-
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
         {
@@ -43,13 +39,6 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
-
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError("Invalid model state for the CreateFavoriteRecipeDto object");
-            return UnprocessableEntity(ModelState);
-        }
-        
         var favoriteRecipeEntity = _mapper.Map<FavoriteRecipe>(favoriteRecipe);
          _repository.FavoriteRecipe.CreateApplicationUserFavoriteRecipe(authorId, recipeId, favoriteRecipeEntity);
         await _repository.SaveAsync();

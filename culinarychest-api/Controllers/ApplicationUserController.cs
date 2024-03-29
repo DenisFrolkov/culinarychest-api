@@ -1,5 +1,6 @@
 using AutoMapper;
 using Contracts;
+using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -39,20 +40,9 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpPost]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateApplicationUser([FromBody] CreateApplicationUserDtoDto createApplicationUser)
     {
-        if (createApplicationUser == null)
-        {
-            _logger.LogError("ApplicationUserForCreationDto object sent from client is null.");
-            return BadRequest("ApplicationUserForCreationDto object is null");
-        }
-        
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError("Invalid model state for the CreateApplicationUserDto object");
-            return UnprocessableEntity(ModelState);
-        }
-
         var applicationUserEntity = _mapper.Map<ApplicationUser>(createApplicationUser);
         _repository.ApplicationUser.CreateApplicationUser(applicationUserEntity);
         await _repository.SaveAsync();
@@ -76,27 +66,15 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpPut("{userId}")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> UpdateApplicationUser(int userId, [FromBody] UpdateApplicationUserDtoDto applicationUser)
     {
-        if (applicationUser == null)
-        {
-            _logger.LogError("UpdateApplicationUserDto object sent from client is null.");
-            return BadRequest("UpdateApplicationUserDto object is null"); 
-        }
-
         var applicationUserEntity = await _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: true);
         if (applicationUserEntity == null)
         {
             _logger.LogInfo($"ApplicationUser with id: {userId} doesn't exist in the database.");
             return NotFound();
         }
-        
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError("Invalid model state for the UpdateApplicationUserDto object");
-            return UnprocessableEntity(ModelState);
-        }
-
         _mapper.Map(applicationUser, applicationUserEntity);
         await _repository.SaveAsync();
         return NoContent();

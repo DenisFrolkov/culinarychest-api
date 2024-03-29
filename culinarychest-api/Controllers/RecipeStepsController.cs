@@ -1,5 +1,6 @@
 using AutoMapper;
 using Contracts;
+using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -38,27 +39,15 @@ public class RecipeStepsController : ControllerBase
     }
 
     [HttpPost]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateRecipeSteps(int recipeId, [FromBody] CreateStepsDto step)
     {
-        if (step == null)
-        {
-            _logger.LogError("CreateStepsDto object sent from client is null.");
-            return BadRequest("CreateStepsDto object is null");
-        }
-
         var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
-        
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError("Invalid model state for the CreateStepsDto object");
-            return UnprocessableEntity(ModelState);
-        }
-
         var stepEntity = _mapper.Map<Step>(step);
         _repository.Step.CreateRecipeStep(recipeId, stepEntity);
         await _repository.SaveAsync();
@@ -70,14 +59,9 @@ public class RecipeStepsController : ControllerBase
     }
 
     [HttpPut("{stepId}")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> UpdateRecipeStep(int recipeId, int stepId, [FromBody] UpdateStepDto step)
     {
-        if (step == null)
-        {
-            _logger.LogError("UpdateStepDto object sent from client is null.");
-            return BadRequest("UpdateStepDto object is null");
-        }
-
         var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
         {
@@ -91,13 +75,6 @@ public class RecipeStepsController : ControllerBase
             _logger.LogInfo($"Step with id: {stepId} doesn't exist in the database.");
             return NotFound();
         }
-        
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError("Invalid model state for the UpdateStepDto object");
-            return UnprocessableEntity(ModelState);
-        }
-
         _mapper.Map(step, stepEntity);
         await _repository.SaveAsync();
         return NoContent();
