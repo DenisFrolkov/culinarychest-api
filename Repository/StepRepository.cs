@@ -29,4 +29,9 @@ public class StepRepository : RepositoryBase<Step>, IStepRepository
         step.RecipeId = recipeId;
         Create(step);
     }
+
+    public void DeleteStep(Step step)
+    {
+        Delete(step);
+    }
 }

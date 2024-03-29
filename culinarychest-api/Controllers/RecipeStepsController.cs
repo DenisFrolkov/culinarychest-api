@@ -79,4 +79,25 @@ public class RecipeStepsController : ControllerBase
         await _repository.SaveAsync();
         return NoContent();
     }
+
+    [HttpDelete("{stepId}")]
+    public async Task<IActionResult> DeleteRecipeStep(int recipeId, int stepId)
+    {
+        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        if (recipe == null)
+        {
+            _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
+            return NotFound();
+        }
+        var recipeStep = 
+            await _repository.Step.GetStep(stepId, trackChanges: false);
+        if (recipeStep == null)
+        {
+            _logger.LogInfo($"Step with id: {stepId} doesn't exist in the database.");
+            return NotFound();
+        }
+        _repository.Step.DeleteStep(recipeStep);
+        await _repository.SaveAsync();
+        return NoContent();
+    }
 }
