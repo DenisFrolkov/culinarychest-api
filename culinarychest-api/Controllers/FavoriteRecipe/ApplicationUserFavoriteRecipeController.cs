@@ -2,6 +2,7 @@ using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 
 namespace culinarychest_api.Controllers;
@@ -23,7 +24,8 @@ public class ApplicationUserFavoriteRecipeController : ControllerBase
     }
 
     [HttpGet(Name = "GetFavoriteRecipeForApplicationUserByAuthorId")]
-    public async Task<IActionResult> GetApplicationUserFavoriteRecipes(int authorId)
+    public async Task<IActionResult> GetApplicationUserFavoriteRecipes(int authorId, 
+        [FromQuery] ApplicationUserFavoriteRecipeParameters applicationUserFavoriteRecipeParameters)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
@@ -31,8 +33,9 @@ public class ApplicationUserFavoriteRecipeController : ControllerBase
             _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
             return NotFound();
         }
-        var favoriteRecipeFromDb = await _repository.FavoriteRecipe.GetApplicationUserFavoriteRecipes(authorId, trackChanges: false);
-        var favoriteRecipeDto = _mapper.Map<IEnumerable<FavoriteRecipeDto>>(favoriteRecipeFromDb);
+        var dbFavoriteRecipe = await _repository.FavoriteRecipe.GetApplicationUserFavoriteRecipes(authorId, 
+            applicationUserFavoriteRecipeParameters, trackChanges: false);
+        var favoriteRecipeDto = _mapper.Map<IEnumerable<FavoriteRecipeDto>>(dbFavoriteRecipe);
         return Ok(favoriteRecipeDto);
     }
     

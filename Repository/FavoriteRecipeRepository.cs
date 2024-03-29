@@ -1,6 +1,7 @@
 using Contracts;
 using Entities;
 using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
@@ -11,9 +12,11 @@ public class FavoriteRecipeRepository : RepositoryBase<FavoriteRecipe>, IFavorit
     {
     }
     
-    public async Task<List<FavoriteRecipe>> GetApplicationUserFavoriteRecipes(int authorId, bool trackChanges) =>
+    public async Task<List<FavoriteRecipe>> GetApplicationUserFavoriteRecipes(int authorId, ApplicationUserFavoriteRecipeParameters applicationUserFavoriteRecipeParameters, bool trackChanges) =>
         await FindByCondition(favoriteRecipe => favoriteRecipe.AuthorId.Equals(authorId), trackChanges)
             .OrderBy(e => e.RecipeId)
+            .Skip((applicationUserFavoriteRecipeParameters.PageNumber - 1) * applicationUserFavoriteRecipeParameters.PageSize) 
+            .Take(applicationUserFavoriteRecipeParameters.PageSize)
             .ToListAsync();
 
     public async Task<FavoriteRecipe> GetApplicationUserFavoriteRecipe(int authorId, int favoriteRecipeId, bool trackChanges) =>

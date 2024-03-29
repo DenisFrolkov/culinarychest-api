@@ -33,7 +33,7 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
             _logger.LogInfo($"Company with id: {authorId} doesn't exist in the database.");
             return NotFound();
         }
-        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");

@@ -3,6 +3,7 @@ using Contracts;
 using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 
 namespace culinarychest_api.Controllers;
@@ -23,7 +24,7 @@ public class ApplicationUserRecipeController : ControllerBase
     }
 
     [HttpGet(Name = "GetApplicationUserRecipesByAuthorId")]
-    public async Task<IActionResult> GetApplicationUserRecipes(int authorId)
+    public async Task<IActionResult> GetApplicationUserRecipes(int authorId, [FromQuery] ApplicationUserRecipeParameters applicationUserRecipeParameters)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
@@ -31,7 +32,8 @@ public class ApplicationUserRecipeController : ControllerBase
             _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
             return NotFound();
         }
-        var recipesDb = await _repository.Recipe.GetApplicationUserRecipes(authorId, trackChanges: false);
+        var recipesDb = await _repository.Recipe.GetApplicationUserRecipesAsync(authorId, applicationUserRecipeParameters, 
+            trackChanges: false);
         var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(recipesDb);
         return Ok(recipesDto);
     }
@@ -66,7 +68,7 @@ public class ApplicationUserRecipeController : ControllerBase
             return NotFound();
         }
         var applicationUserRecipe = 
-            await _repository.Recipe.GetApplicationUserRecipe(authorId, recipeId, trackChanges: false);
+            await _repository.Recipe.GetApplicationUserRecipeAsync(authorId, recipeId, trackChanges: false);
         if (applicationUserRecipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
@@ -88,7 +90,7 @@ public class ApplicationUserRecipeController : ControllerBase
             return NotFound();
         }
 
-        var recipeEntity = await _repository.Recipe.GetRecipe(recipeId, trackChanges: true);
+        var recipeEntity = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: true);
         if (recipeEntity == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");

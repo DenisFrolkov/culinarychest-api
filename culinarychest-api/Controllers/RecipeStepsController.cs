@@ -26,7 +26,7 @@ public class RecipeStepsController : ControllerBase
     [HttpGet(Name = "GetRecipeStepsByRecipeId")]
     public async Task<IActionResult> GetRecipeSteps(int recipeId)
     {
-        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"ApplicationUser with id: {recipeId} doesn't exist in the database.");
@@ -42,7 +42,7 @@ public class RecipeStepsController : ControllerBase
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateRecipeSteps(int recipeId, [FromBody] CreateStepsDto step)
     {
-        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
@@ -62,7 +62,7 @@ public class RecipeStepsController : ControllerBase
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> UpdateRecipeStep(int recipeId, int stepId, [FromBody] UpdateStepDto step)
     {
-        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
@@ -83,7 +83,7 @@ public class RecipeStepsController : ControllerBase
     [HttpDelete("{stepId}")]
     public async Task<IActionResult> DeleteRecipeStep(int recipeId, int stepId)
     {
-        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
