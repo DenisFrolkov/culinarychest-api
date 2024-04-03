@@ -5,6 +5,7 @@ using Entities.DataTransferObjects;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace culinarychest_api.Controllers;
 
@@ -32,9 +33,10 @@ public class ApplicationUserRecipeController : ControllerBase
             _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
             return NotFound();
         }
-        var recipesDb = await _repository.Recipe.GetApplicationUserRecipesAsync(authorId, applicationUserRecipeParameters, 
+        var dbRecipes = await _repository.Recipe.GetApplicationUserRecipesAsync(authorId, applicationUserRecipeParameters, 
             trackChanges: false);
-        var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(recipesDb);
+        Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dbRecipes.MetaData));
+        var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(dbRecipes);
         return Ok(recipesDto);
     }
 

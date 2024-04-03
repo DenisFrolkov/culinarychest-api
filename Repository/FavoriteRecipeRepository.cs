@@ -12,12 +12,16 @@ public class FavoriteRecipeRepository : RepositoryBase<FavoriteRecipe>, IFavorit
     {
     }
     
-    public async Task<List<FavoriteRecipe>> GetApplicationUserFavoriteRecipes(int authorId, ApplicationUserFavoriteRecipeParameters applicationUserFavoriteRecipeParameters, bool trackChanges) =>
-        await FindByCondition(favoriteRecipe => favoriteRecipe.AuthorId.Equals(authorId), trackChanges)
+    public async Task<PagedList<FavoriteRecipe>> GetApplicationUserFavoriteRecipes(int authorId, ApplicationUserFavoriteRecipeParameters applicationUserFavoriteRecipeParameters, bool trackChanges)
+    {
+        var favoriteRecipe =  await FindByCondition(favoriteRecipe => 
+                favoriteRecipe.AuthorId.Equals(authorId), trackChanges)
             .OrderBy(e => e.RecipeId)
-            .Skip((applicationUserFavoriteRecipeParameters.PageNumber - 1) * applicationUserFavoriteRecipeParameters.PageSize) 
-            .Take(applicationUserFavoriteRecipeParameters.PageSize)
             .ToListAsync();
+        return PagedList<FavoriteRecipe>
+            .ToPagedList(favoriteRecipe, applicationUserFavoriteRecipeParameters.PageNumber,
+                applicationUserFavoriteRecipeParameters.PageSize);
+    }
 
     public async Task<FavoriteRecipe> GetApplicationUserFavoriteRecipe(int authorId, int favoriteRecipeId, bool trackChanges) =>
         await FindByCondition(favoriteRecipe => 

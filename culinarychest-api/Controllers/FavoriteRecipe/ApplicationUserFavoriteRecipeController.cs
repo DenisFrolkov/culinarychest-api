@@ -4,6 +4,7 @@ using Entities.DataTransferObjects;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace culinarychest_api.Controllers;
 
@@ -35,6 +36,7 @@ public class ApplicationUserFavoriteRecipeController : ControllerBase
         }
         var dbFavoriteRecipe = await _repository.FavoriteRecipe.GetApplicationUserFavoriteRecipes(authorId, 
             applicationUserFavoriteRecipeParameters, trackChanges: false);
+        Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dbFavoriteRecipe.MetaData));
         var favoriteRecipeDto = _mapper.Map<IEnumerable<FavoriteRecipeDto>>(dbFavoriteRecipe);
         return Ok(favoriteRecipeDto);
     }

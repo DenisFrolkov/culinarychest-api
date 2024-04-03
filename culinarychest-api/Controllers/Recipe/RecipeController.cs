@@ -4,6 +4,7 @@ using Entities.DataTransferObjects;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace culinarychest_api.Controllers;
 
@@ -25,6 +26,7 @@ public class RecipeController : ControllerBase
     public async Task<IActionResult> GetRecipes([FromQuery] RecipeParameters recipeParameters)
     {
         var dbRecipe = await _repository.Recipe.GetRecipesAsync(recipeParameters, trackChanges: false);
+        Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dbRecipe.MetaData));
         var recipeDto = _mapper.Map<IEnumerable<RecipeDto>>(dbRecipe);
         return Ok(recipeDto);
     }

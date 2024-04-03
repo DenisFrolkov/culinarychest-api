@@ -5,7 +5,7 @@ namespace Contracts;
 
 public interface IFavoriteRecipeRepository
 {
-    Task<List<FavoriteRecipe>> GetApplicationUserFavoriteRecipes(int authorId, ApplicationUserFavoriteRecipeParameters applicationUserFavoriteRecipeParameters, bool trackChanges);
+    Task<PagedList<FavoriteRecipe>> GetApplicationUserFavoriteRecipes(int authorId, ApplicationUserFavoriteRecipeParameters applicationUserFavoriteRecipeParameters, bool trackChanges);
 
     Task<FavoriteRecipe> GetApplicationUserFavoriteRecipe(int authorId, int favoriteRecipeId, bool trackChanges);
 
