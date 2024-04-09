@@ -34,7 +34,7 @@ public class Startup
                 configure.RespectBrowserAcceptHeader = true;
                 configure.ReturnHttpNotAcceptable = true;
             }
-        ).AddXmlDataContractSerializerFormatters();
+        );
         services.Configure<ApiBehaviorOptions>(options =>
         {
             options.SuppressModelStateInvalidFilter = true;

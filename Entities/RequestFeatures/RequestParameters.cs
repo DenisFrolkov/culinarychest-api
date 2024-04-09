@@ -7,17 +7,6 @@ public abstract class RequestParameters
     public int PageSize
     {
         get { return _pageSize; }
-        set { _pageSize = (value > maxPageSize) ? maxPageSize : value; } }
-}
-
-public class RecipeParameters : RequestParameters {
-    
-}
-
-public class ApplicationUserFavoriteRecipeParameters : RequestParameters {
-    
-}
-
-public class ApplicationUserRecipeParameters : RequestParameters {
-    
+        set { _pageSize = (value > maxPageSize) ? maxPageSize : value; } 
+    }
 }

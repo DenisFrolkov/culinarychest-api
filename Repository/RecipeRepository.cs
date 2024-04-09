@@ -3,6 +3,7 @@ using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
+using Repository.Extensions;
 
 namespace Repository;
 
@@ -21,6 +22,7 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
     public async Task<PagedList<Recipe>> GetRecipesAsync(RecipeParameters recipeParameters, bool trackChanges)
     {
         var recipe = await FindAll(trackChanges)
+            .Search(recipeParameters.SearchTerm)
             .OrderBy(e => e.Title)
             .ToListAsync();
         return PagedList<Recipe>
