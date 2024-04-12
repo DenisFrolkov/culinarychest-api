@@ -3,7 +3,6 @@ using Contracts;
 using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace culinarychest_api.Controllers;
@@ -11,13 +10,13 @@ namespace culinarychest_api.Controllers;
 [ApiVersion("1.0")]
 [Route("api/applicationUser/{authorId}/{recipeId}")]
 [ApiController]
-public class CreateApplicationUserFavoriteRecipeController : ControllerBase
+public class CreateApplicationUserFavoriteRecipeV2Controller : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
 
-    public CreateApplicationUserFavoriteRecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+    public CreateApplicationUserFavoriteRecipeV2Controller(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
     {
         _repository = repository;
         _logger = logger;
@@ -41,7 +40,7 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
             return NotFound();
         }
         var favoriteRecipeEntity = _mapper.Map<FavoriteRecipe>(favoriteRecipe);
-         _repository.FavoriteRecipe.CreateApplicationUserFavoriteRecipe(authorId, recipeId, favoriteRecipeEntity);
+        _repository.FavoriteRecipe.CreateApplicationUserFavoriteRecipe(authorId, recipeId, favoriteRecipeEntity);
         await _repository.SaveAsync();
         var favoriteRecipeToReturn = _mapper.Map<FavoriteRecipeDto>(favoriteRecipeEntity);
         return CreatedAtRoute("GetFavoriteRecipeForApplicationUserByAuthorId", new

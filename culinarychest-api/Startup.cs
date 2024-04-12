@@ -43,6 +43,7 @@ public class Startup
         });
         services.AddScoped<ValidationFilterAttribute>();
         services.AddScoped <IDataShaper<RecipeDto>, DataShaper<RecipeDto>>();
+        services.ConfigureVersioning();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger) { //это метод, где вы настраиваете конвейер обработки HTTP-запросов. В этом методе:

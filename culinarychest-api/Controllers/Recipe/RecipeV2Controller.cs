@@ -1,24 +1,23 @@
 using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
-using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/recipe")]
 [ApiController]
-public class RecipeController : ControllerBase
+public class RecipeV2Controller : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
     private readonly IDataShaper<RecipeDto> _dataShaper;
 
-    public RecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IDataShaper<RecipeDto> dataShaper)
+    public RecipeV2Controller(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IDataShaper<RecipeDto> dataShaper)
     {
         _repository = repository;
         _logger = logger;
@@ -31,7 +30,8 @@ public class RecipeController : ControllerBase
         var dbRecipe = await _repository.Recipe.GetRecipesAsync(recipeParameters, trackChanges: false);
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dbRecipe.MetaData));
         var recipeDto = _mapper.Map<IEnumerable<RecipeDto>>(dbRecipe);
-        return Ok(_dataShaper.ShapeData(recipeDto, recipeParameters.Fields));    }
+        return Ok(_dataShaper.ShapeData(recipeDto, recipeParameters.Fields));
+    }
     
     [HttpGet(template: "{recipeId}", Name = "RecipeByRecipeId")]
     public async Task<IActionResult> GetRecipe(int recipeId)

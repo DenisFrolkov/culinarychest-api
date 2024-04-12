@@ -9,16 +9,16 @@ using Newtonsoft.Json;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/applicationUser/{authorId}/recipe")]
 [ApiController]
-public class ApplicationUserRecipeController : ControllerBase
+public class ApplicationUserRecipeV2Controller : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
 
-    public ApplicationUserRecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+    public ApplicationUserRecipeV2Controller(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
     {
         _repository = repository;
         _logger = logger;

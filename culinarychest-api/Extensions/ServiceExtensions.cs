@@ -1,6 +1,7 @@
 using Contracts;
 using Entities;
 using LoggerService;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 
@@ -18,6 +19,17 @@ public static class ServiceExtensions
                     .AllowAnyHeader()); 
         }
     );
+
+    public static void ConfigureVersioning(this IServiceCollection services)
+    {
+        services.AddApiVersioning(opt =>
+        {
+            opt.ReportApiVersions = true;
+            opt.AssumeDefaultVersionWhenUnspecified = true;
+            opt.DefaultApiVersion = new ApiVersion(1, 0);
+        });
+    }
+    
     public static void ConfigureIISIntegration(this IServiceCollection services)
         => services.Configure<IISOptions>(options => { }); 
     

@@ -3,21 +3,20 @@ using Contracts;
 using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/recipe/{recipeId}/steps")]
 [ApiController]
-public class RecipeStepsController : ControllerBase
+public class RecipeStepsV2Controller : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
     
-    public RecipeStepsController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+    public RecipeStepsV2Controller(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
     {
         _repository = repository;
         _logger = logger;

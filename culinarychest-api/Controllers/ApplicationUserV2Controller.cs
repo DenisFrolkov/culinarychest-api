@@ -7,16 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/applicationUser")]
 [ApiController]
-public class ApplicationUserController : ControllerBase
+public class ApplicationUserV2Controller : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
 
-    public ApplicationUserController(IRepositoryManager repository, ILoggerManager logger,
+    public ApplicationUserV2Controller(IRepositoryManager repository, ILoggerManager logger,
         IMapper mapper)
     {
         _repository = repository;
@@ -81,4 +81,3 @@ public class ApplicationUserController : ControllerBase
         return NoContent();
     }
 }
-

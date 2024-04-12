@@ -1,24 +1,23 @@
 using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
-using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/applicationUser/{authorId}/favoriteRecipe")]
 [ApiController]
-public class ApplicationUserFavoriteRecipeController : ControllerBase
+public class ApplicationUserFavoriteRecipeV2Controller : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger; 
     private readonly IMapper _mapper;
 
     
-    public ApplicationUserFavoriteRecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+    public ApplicationUserFavoriteRecipeV2Controller(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
     {
         _repository = repository; 
         _logger = logger; 
