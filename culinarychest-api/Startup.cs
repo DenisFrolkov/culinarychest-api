@@ -1,9 +1,11 @@
 using Contracts;
 using culinarychest_api.ActionFilters;
 using culinarychest_api.Extensions;
+using Entities.DataTransferObjects;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using Repository.DataShaping;
 
 namespace culinarychest_api;
 
@@ -40,6 +42,7 @@ public class Startup
             options.SuppressModelStateInvalidFilter = true;
         });
         services.AddScoped<ValidationFilterAttribute>();
+        services.AddScoped <IDataShaper<RecipeDto>, DataShaper<RecipeDto>>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger) { //это метод, где вы настраиваете конвейер обработки HTTP-запросов. В этом методе:

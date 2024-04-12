@@ -15,12 +15,14 @@ public class RecipeController : ControllerBase
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
+    private readonly IDataShaper<RecipeDto> _dataShaper;
 
-    public RecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+    public RecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IDataShaper<RecipeDto> dataShaper)
     {
         _repository = repository;
         _logger = logger;
         _mapper = mapper;
+        _dataShaper = dataShaper;
     }
     
     public async Task<IActionResult> GetRecipes([FromQuery] RecipeParameters recipeParameters)
@@ -28,8 +30,7 @@ public class RecipeController : ControllerBase
         var dbRecipe = await _repository.Recipe.GetRecipesAsync(recipeParameters, trackChanges: false);
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dbRecipe.MetaData));
         var recipeDto = _mapper.Map<IEnumerable<RecipeDto>>(dbRecipe);
-        return Ok(recipeDto);
-    }
+        return Ok(_dataShaper.ShapeData(recipeDto, recipeParameters.Fields));    }
     
     [HttpGet(template: "{recipeId}", Name = "RecipeByRecipeId")]
     public async Task<IActionResult> GetRecipe(int recipeId)
