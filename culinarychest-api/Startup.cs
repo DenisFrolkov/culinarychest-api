@@ -44,6 +44,8 @@ public class Startup
         services.AddScoped<ValidationFilterAttribute>();
         services.AddScoped <IDataShaper<RecipeDto>, DataShaper<RecipeDto>>();
         services.ConfigureVersioning();
+        services.AddAuthentication(); 
+        services.ConfigureIdentity();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger) { //это метод, где вы настраиваете конвейер обработки HTTP-запросов. В этом методе:
@@ -63,6 +65,7 @@ public class Startup
         });
         //UseRouting и UseAuthorization настраивают маршрутизацию и авторизацию соответственно.
         app.UseRouting();
+        app.UseAuthentication();
         app.UseAuthorization();
         app.UseEndpoints(endpoints =>
         {

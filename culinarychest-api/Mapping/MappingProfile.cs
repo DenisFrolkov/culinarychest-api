@@ -24,5 +24,7 @@ public class MappingProfile : Profile
         CreateMap<UpdateApplicationUserDtoDto, ApplicationUser>();
         CreateMap<UpdateRecipeDto, Recipe>();
         CreateMap<UpdateStepDto, Step>();
+        
+        CreateMap<UserForRegistrationDto, User>();
     }
 }
