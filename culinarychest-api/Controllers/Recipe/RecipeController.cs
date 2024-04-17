@@ -33,7 +33,8 @@ public class RecipeController : ControllerBase
         var dbRecipe = await _repository.Recipe.GetRecipesAsync(recipeParameters, trackChanges: false);
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dbRecipe.MetaData));
         var recipeDto = _mapper.Map<IEnumerable<RecipeDto>>(dbRecipe);
-        return Ok(_dataShaper.ShapeData(recipeDto, recipeParameters.Fields));    }
+        return Ok(_dataShaper.ShapeData(recipeDto, recipeParameters.Fields));
+    }
     
     [HttpGet(template: "{recipeId}", Name = "RecipeByRecipeId")]
     public async Task<IActionResult> GetRecipe(int recipeId)

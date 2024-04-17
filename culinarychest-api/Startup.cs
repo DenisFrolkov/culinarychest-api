@@ -2,6 +2,7 @@ using Contracts;
 using culinarychest_api.ActionFilters;
 using culinarychest_api.Extensions;
 using Entities.DataTransferObjects;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
@@ -12,7 +13,7 @@ namespace culinarychest_api;
 
 public class Startup
 {
-    public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration, IWebHostEnvironment hostEnvironment)
     {
         //Принимает объект IConfiguration, который используется для доступа к настройкам приложения.
         //В конструкторе загружается конфигурация для логирования с помощью NLog, используя файл nlog.config,
@@ -21,6 +22,7 @@ public class Startup
         Configuration = configuration;
     }
 
+    public IWebHostEnvironment HostEnvironment { get; }
     public IConfiguration Configuration { get; } //это свойство, которое хранит объект IConfiguration. Этот объект используется для доступа к настройкам приложения
 
     public void ConfigureServices(IServiceCollection services) //это метод, где вы регистрируете и настраиваете сервисы, которые будут использоваться в вашем приложении. В этом методе:

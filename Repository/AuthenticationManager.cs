@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Contracts;
 using Entities.DataTransferObjects;
@@ -39,12 +40,20 @@ public class AuthenticationManager : IAuthenticationManager
     
     private SigningCredentials GetSigningCredentials()
     {
-        // var secretKey = _configuration["JwtSettings:SecretKey"]; 
-        var secretKey = _configuration["CulinaryChestSecretKey"];
-        var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable(secretKey));;
+        var secretKey = _configuration["JwtSettings:SecretKey"]; 
+        if (string.IsNullOrEmpty(secretKey))
+        {
+            throw new ArgumentException("Secret key cannot be null or empty.", nameof(secretKey));
+        }
+        var key = Encoding.UTF8.GetBytes(secretKey);
         var secret = new SymmetricSecurityKey(key);
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
     }
+    // var secretKey = _configuration["JwtSettings:SecretKey"]; 
+    // var secretKey = _configuration["CulinaryChestSecretKey"];
+    // var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable(secretKey));;
+    // var secret = new SymmetricSecurityKey(key);
+    // return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
 
     private async Task<List<Claim>> GetClaims()
     {
