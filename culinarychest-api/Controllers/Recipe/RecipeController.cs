@@ -3,6 +3,7 @@ using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -26,6 +27,7 @@ public class RecipeController : ControllerBase
         _dataShaper = dataShaper;
     }
     
+    [HttpGet(Name = "GetRecipes"), Authorize]
     public async Task<IActionResult> GetRecipes([FromQuery] RecipeParameters recipeParameters)
     {
         var dbRecipe = await _repository.Recipe.GetRecipesAsync(recipeParameters, trackChanges: false);

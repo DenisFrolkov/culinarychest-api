@@ -5,6 +5,7 @@ using Entities.DataTransferObjects;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using Repository;
 using Repository.DataShaping;
 
 namespace culinarychest_api;
@@ -46,30 +47,32 @@ public class Startup
         services.ConfigureVersioning();
         services.AddAuthentication(); 
         services.ConfigureIdentity();
+        services.ConfigureJWT(Configuration);
+        services.AddScoped<IAuthenticationManager, AuthenticationManager>();
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger) { //это метод, где вы настраиваете конвейер обработки HTTP-запросов. В этом методе:
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
+    {
         if (env.IsDevelopment())
         {
-            app.UseDeveloperExceptionPage(); //Если приложение работает в режиме разработки (env.IsDevelopment()), включается страница исключений разработчика
+            app.UseDeveloperExceptionPage();
         }
-        
+
         app.ConfigureExceptionHandler(logger);
-        app.UseHttpsRedirection(); //перенаправляет все HTTP-запросы на HTTPS
-        app.UseHsts(); //добавляет заголовок HSTS для усиления безопасности
-        app.UseStaticFiles(); //позволяет использовать статические файлы
-        app.UseCors("CorsPolicy"); //позволяет использовать статические файлы
-        app.UseForwardedHeaders(new ForwardedHeadersOptions //настраивает обработку заголовков X-Forwarded-For, X-Forwarded-Proto, X-Forwarded-Host, используемых при размещении приложения за обратным прокси
+        app.UseHttpsRedirection();
+        app.UseHsts();
+        app.UseStaticFiles();
+        app.UseCors("CorsPolicy");
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
             ForwardedHeaders = ForwardedHeaders.All
         });
-        //UseRouting и UseAuthorization настраивают маршрутизацию и авторизацию соответственно.
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers(); //настраивает конечные точки приложения, включая маршруты, определенные в контроллерах.
+            endpoints.MapControllers();
         });
     }
 }
