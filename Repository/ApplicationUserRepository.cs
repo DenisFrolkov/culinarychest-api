@@ -16,7 +16,7 @@ public class ApplicationUserRepository : RepositoryBase<ApplicationUser>, IAppli
     //что позволяет ApplicationUserRepository использовать базовую реализацию операций CRUD для сущностей типа ApplicationUser
     public ApplicationUserRepository(RepositoryContext repositoryContext) : base(repositoryContext){  }
 
-    public async Task<ApplicationUser> GetApplicationUser(int userId, bool trackChanges) => 
+    public async Task<ApplicationUser> GetApplicationUser(string userId, bool trackChanges) => 
         await FindByCondition(applicationUser => 
             applicationUser.UserId.Equals(userId), trackChanges).SingleOrDefaultAsync();
 

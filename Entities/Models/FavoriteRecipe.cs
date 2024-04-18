@@ -9,7 +9,7 @@ public class FavoriteRecipe
     [Column("FavoriteRecipeId")]
     public int FavoriteRecipeId { get; set; }
     [Required]
-    public int AuthorId { get; set; }
+    public string AuthorId { get; set; }
     [Required]
     public int RecipeId { get; set; }
     [Required(ErrorMessage = "Data is required.")]

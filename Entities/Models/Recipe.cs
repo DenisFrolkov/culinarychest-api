@@ -8,7 +8,7 @@ public class Recipe
 {
     [Column("RecipeId")]
     public int RecipeId { get; set; }
-    public int AuthorId { get; set; }
+    public string AuthorId { get; set; }
     [Required(ErrorMessage = "Recipe title - required field.")]
     public string Title { get; set; }
     [Required(ErrorMessage = "Recipe images - required field.")]

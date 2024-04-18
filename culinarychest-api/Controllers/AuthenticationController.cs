@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AutoMapper;
 using Contracts;
 using culinarychest_api.ActionFilters;
@@ -26,7 +27,7 @@ public class AuthenticationController : ControllerBase
         _userManager = userManager;
         _authManager = authManager;
     }
-
+    
     [HttpPost("register")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistration)
@@ -46,7 +47,7 @@ public class AuthenticationController : ControllerBase
         await _userManager.AddToRolesAsync(user, userForRegistration.Roles);
         return StatusCode(201);
     }
-
+    
     [HttpPost("login")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
@@ -57,6 +58,25 @@ public class AuthenticationController : ControllerBase
             return Unauthorized();
         }
         return Ok(new { Token = await _authManager.CreateToken() });
+    }
+    
+    [HttpGet("user"), Authorize]
+    public IActionResult GetUserName()
+    {
+        var userName = User.FindFirstValue(ClaimTypes.Name);
+
+        return Ok(new { User = userName});
+    }
+    
+    [HttpGet("userInfo/{userName}"), Authorize]
+    public async Task<IActionResult> GetUserInfo(string username)
+    {
+        var user = await _userManager.FindByNameAsync(username);
+        if (user == null)
+        {
+            return NotFound();
+        }
+        return Ok(new { UserId = user.Id, Email = user.Email });
     }
 }
 

@@ -4,6 +4,7 @@ using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -26,7 +27,7 @@ public class ApplicationUserRecipeController : ControllerBase
     }
 
     [HttpGet(Name = "GetApplicationUserRecipesByAuthorId")]
-    public async Task<IActionResult> GetApplicationUserRecipes(int authorId, [FromQuery] ApplicationUserRecipeParameters applicationUserRecipeParameters)
+    public async Task<IActionResult> GetApplicationUserRecipes(string authorId, [FromQuery] ApplicationUserRecipeParameters applicationUserRecipeParameters)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
@@ -41,9 +42,9 @@ public class ApplicationUserRecipeController : ControllerBase
         return Ok(recipesDto);
     }
 
-    [HttpPost]
+    [HttpPost, Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> CreateApplicationUserRecipe(int authorId, [FromBody] CreateRecipeDto recipe)
+    public async Task<IActionResult> CreateApplicationUserRecipe(string authorId, [FromBody] CreateRecipeDto recipe)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
@@ -54,15 +55,16 @@ public class ApplicationUserRecipeController : ControllerBase
         var recipeEntity = _mapper.Map<Recipe>(recipe);
         _repository.Recipe.CreateApplicationUserRecipe(authorId, recipeEntity);
         await _repository.SaveAsync();
+        var successMessage = $"Recipe has been created successfully.";
         var recipeToReturn = _mapper.Map<RecipeDto>(recipeEntity);
         return CreatedAtRoute("GetApplicationUserRecipesByAuthorId", new
         {
             authorId, id = recipeToReturn.RecipeId
-        }, recipeToReturn);
+        }, successMessage);
     }
 
     [HttpDelete("{recipeId}")]
-    public async Task<IActionResult> DeleteApplicationUserRecipe(int authorId, int recipeId)
+    public async Task<IActionResult> DeleteApplicationUserRecipe(string authorId, int recipeId)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
@@ -84,7 +86,7 @@ public class ApplicationUserRecipeController : ControllerBase
 
     [HttpPut("{recipeId}")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> UpdateApplicationUserRecipe(int authorId, int recipeId, [FromBody] UpdateRecipeDto recipe)
+    public async Task<IActionResult> UpdateApplicationUserRecipe(string authorId, int recipeId, [FromBody] UpdateRecipeDto recipe)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)

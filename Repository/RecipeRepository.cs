@@ -12,12 +12,6 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
     public RecipeRepository(RepositoryContext repositoryContext) : base(repositoryContext)
     {
     }
-    
-    // public async Task<List<Recipe>> GetRecipesAsync(RecipeParameters recipeParameters, bool trackChanges) =>  await FindAll(trackChanges)
-    //     .OrderBy(e => e.Title)
-    //     .Skip((recipeParameters.PageNumber - 1) * recipeParameters.PageSize) 
-    //     .Take(recipeParameters.PageSize)
-    //     .ToListAsync();
 
     public async Task<PagedList<Recipe>> GetRecipesAsync(RecipeParameters recipeParameters, bool trackChanges)
     {
@@ -29,7 +23,7 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
             .ToPagedList(recipe, recipeParameters.PageNumber, recipeParameters.PageSize);
     }
 
-    public async Task<PagedList<Recipe>> GetApplicationUserRecipesAsync(int authorId,
+    public async Task<PagedList<Recipe>> GetApplicationUserRecipesAsync(string authorId,
         ApplicationUserRecipeParameters applicationUserRecipeParameters, bool trackChanges)
     {
         var recipe =  await FindByCondition(recipe =>
@@ -42,7 +36,7 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
             .ToPagedList(recipe, applicationUserRecipeParameters.PageNumber, applicationUserRecipeParameters.PageSize);
     }
 
-    public async Task<Recipe> GetApplicationUserRecipeAsync(int authorId, int recipeId, bool trackChanges) =>
+    public async Task<Recipe> GetApplicationUserRecipeAsync(string authorId, int recipeId, bool trackChanges) =>
         await FindByCondition(recipe => 
             recipe.AuthorId.Equals(authorId) && recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefaultAsync();
 
@@ -50,7 +44,7 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
         await FindByCondition(recipe => 
             recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefaultAsync();
 
-    public void CreateApplicationUserRecipe(int authorId, Recipe recipe)
+    public void CreateApplicationUserRecipe(string authorId, Recipe recipe)
     {
         recipe.AuthorId = authorId;
         Create(recipe);

@@ -26,7 +26,7 @@ public class ApplicationUserFavoriteRecipeController : ControllerBase
     }
 
     [HttpGet(Name = "GetFavoriteRecipeForApplicationUserByAuthorId")]
-    public async Task<IActionResult> GetApplicationUserFavoriteRecipes(int authorId, 
+    public async Task<IActionResult> GetApplicationUserFavoriteRecipes(string authorId, 
         [FromQuery] ApplicationUserFavoriteRecipeParameters applicationUserFavoriteRecipeParameters)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
@@ -43,7 +43,7 @@ public class ApplicationUserFavoriteRecipeController : ControllerBase
     }
     
     [HttpDelete("{favoriteRecipeId}")]
-    public async Task<IActionResult> DeleteApplicationUserFavoriteRecipe(int authorId, int favoriteRecipeId)
+    public async Task<IActionResult> DeleteApplicationUserFavoriteRecipe(string authorId, int favoriteRecipeId)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)

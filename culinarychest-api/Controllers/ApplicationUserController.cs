@@ -25,7 +25,7 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpGet(template: "{userId}", Name = "GetApplicationUserByUserId")]
-    public async Task<IActionResult> GetApplicationUser(int userId)
+    public async Task<IActionResult> GetApplicationUser(string userId)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: false);
         if (applicationUser == null)
@@ -53,7 +53,7 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpDelete("{userId}")]
-    public async Task<IActionResult> DeleteApplicationUser(int userId)
+    public async Task<IActionResult> DeleteApplicationUser(string userId)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: false);
         if (applicationUser == null)
@@ -68,7 +68,7 @@ public class ApplicationUserController : ControllerBase
 
     [HttpPut("{userId}")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> UpdateApplicationUser(int userId, [FromBody] UpdateApplicationUserDtoDto applicationUser)
+    public async Task<IActionResult> UpdateApplicationUser(string userId, [FromBody] UpdateApplicationUserDtoDto applicationUser)
     {
         var applicationUserEntity = await _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: true);
         if (applicationUserEntity == null)

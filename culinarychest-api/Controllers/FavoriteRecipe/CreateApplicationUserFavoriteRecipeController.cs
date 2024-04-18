@@ -26,7 +26,7 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
     
     [HttpPost]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> CreateApplicationUserFavoriteRecipe(int authorId, int recipeId, [FromBody] CreateFavoriteRecipeDtoDto favoriteRecipe)
+    public async Task<IActionResult> CreateApplicationUserFavoriteRecipe(string authorId, int recipeId, [FromBody] CreateFavoriteRecipeDtoDto favoriteRecipe)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)

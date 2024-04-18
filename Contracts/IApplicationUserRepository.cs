@@ -4,7 +4,7 @@ namespace Contracts;
 
 public interface IApplicationUserRepository
 {
-    Task<ApplicationUser> GetApplicationUser(int userId, bool trackChanges);
+    Task<ApplicationUser> GetApplicationUser(string userId, bool trackChanges);
     void CreateApplicationUser(ApplicationUser applicationUser);
     void DeleteApplicationUser(ApplicationUser applicationUser);
 }

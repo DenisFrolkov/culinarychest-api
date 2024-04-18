@@ -26,7 +26,7 @@ public class ApplicationUserRecipeV2Controller : ControllerBase
     }
 
     [HttpGet(Name = "GetApplicationUserRecipesByAuthorId")]
-    public async Task<IActionResult> GetApplicationUserRecipes(int authorId, [FromQuery] ApplicationUserRecipeParameters applicationUserRecipeParameters)
+    public async Task<IActionResult> GetApplicationUserRecipes(string authorId, [FromQuery] ApplicationUserRecipeParameters applicationUserRecipeParameters)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
@@ -43,7 +43,7 @@ public class ApplicationUserRecipeV2Controller : ControllerBase
 
     [HttpPost]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> CreateApplicationUserRecipe(int authorId, [FromBody] CreateRecipeDto recipe)
+    public async Task<IActionResult> CreateApplicationUserRecipe(string authorId, [FromBody] CreateRecipeDto recipe)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
@@ -62,7 +62,7 @@ public class ApplicationUserRecipeV2Controller : ControllerBase
     }
 
     [HttpDelete("{recipeId}")]
-    public async Task<IActionResult> DeleteApplicationUserRecipe(int authorId, int recipeId)
+    public async Task<IActionResult> DeleteApplicationUserRecipe(string authorId, int recipeId)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)
@@ -84,7 +84,7 @@ public class ApplicationUserRecipeV2Controller : ControllerBase
 
     [HttpPut("{recipeId}")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> UpdateApplicationUserRecipe(int authorId, int recipeId, [FromBody] UpdateRecipeDto recipe)
+    public async Task<IActionResult> UpdateApplicationUserRecipe(string authorId, int recipeId, [FromBody] UpdateRecipeDto recipe)
     {
         var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
         if (applicationUser == null)

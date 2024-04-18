@@ -13,7 +13,7 @@ public class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
             new Recipe
             {
                 RecipeId = 1,
-                AuthorId = 1,
+                AuthorId = "1",
                 Title = "Рецепт 1",
                 RecipeImage = new byte[123],
                 Ingredients = "Ингредиент 1",

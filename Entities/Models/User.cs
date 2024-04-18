@@ -4,5 +4,6 @@ namespace Entities.Models;
 
 public class User : IdentityUser
 {
-    public string UserId { get; set; }
+    public ICollection<Recipe> CreatedRecipes { get; set; }
+    public ICollection<FavoriteRecipe> FavoriteRecipes { get; set; }
 }
