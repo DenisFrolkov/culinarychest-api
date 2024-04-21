@@ -61,22 +61,26 @@ public class AuthenticationController : ControllerBase
     }
     
     [HttpGet("user"), Authorize]
-    public IActionResult GetUserName()
+    public async Task<IActionResult> GetUserId()
     {
         var userName = User.FindFirstValue(ClaimTypes.Name);
-
-        return Ok(new { User = userName});
-    }
-    
-    [HttpGet("userInfo/{userName}"), Authorize]
-    public async Task<IActionResult> GetUserInfo(string username)
-    {
-        var user = await _userManager.FindByNameAsync(username);
+        var user = await _userManager.FindByNameAsync(userName);
         if (user == null)
         {
             return NotFound();
         }
-        return Ok(new { UserId = user.Id, Email = user.Email });
+        return Ok(new { UserId = user.Id });
     }
+    //
+    // [HttpGet("userInfo/{userName}"), Authorize]
+    // public async Task<IActionResult> GetUserInfo(string username)
+    // {
+    //     var user = await _userManager.FindByNameAsync(username);
+    //     if (user == null)
+    //     {
+    //         return NotFound();
+    //     }
+    //     return Ok(new { UserId = user.Id, Email = user.Email });
+    // }
 }
 

@@ -12,10 +12,15 @@ public class RepositoryContext : IdentityDbContext<User>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
-        modelBuilder.ApplyConfiguration(new FavoriteRecipeConfiguration());
-        modelBuilder.ApplyConfiguration(new RecipeConfiguration());
-        modelBuilder.ApplyConfiguration(new StepConfiguration());
+        // modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
+        // modelBuilder.ApplyConfiguration(new FavoriteRecipeConfiguration());
+        // // modelBuilder.Entity<FavoriteRecipe>()
+        // //     .HasOne(fr => fr.Recipe)
+        // //     .WithMany()
+        // //     .HasForeignKey(fr => fr.RecipeId)
+        // //     .HasPrincipalKey(r => r.RecipeId);
+        // modelBuilder.ApplyConfiguration(new RecipeConfiguration());
+        // modelBuilder.ApplyConfiguration(new StepConfiguration());
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
     }
 

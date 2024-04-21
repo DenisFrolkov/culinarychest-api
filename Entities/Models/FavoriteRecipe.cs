@@ -6,16 +6,18 @@ namespace Entities.Models;
 
 public class FavoriteRecipe
 {
+    [Key]
     [Column("FavoriteRecipeId")]
     public int FavoriteRecipeId { get; set; }
-    [Required]
-    public string AuthorId { get; set; }
-    [Required]
+    [ForeignKey("Author")]
+    public string Id { get; set; }
     public int RecipeId { get; set; }
     [Required(ErrorMessage = "Data is required.")]
     public DateTime AddedDate { get; set; }
-    [ForeignKey("AuthorId")]
-    public ApplicationUser Author { get; set; }
+    
+    [ForeignKey("Id")]
+    public User Author { get; set; }
+    
     [ForeignKey("RecipeId")]
     public Recipe Recipe { get; set; }
 }

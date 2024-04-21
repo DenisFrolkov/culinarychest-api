@@ -6,9 +6,13 @@ namespace Entities.Models;
 
 public class Recipe
 {
+    [Key]
     [Column("RecipeId")]
     public int RecipeId { get; set; }
-    public string AuthorId { get; set; }
+    
+    [ForeignKey("Author")]
+    public string Id { get; set; }
+    
     [Required(ErrorMessage = "Recipe title - required field.")]
     public string Title { get; set; }
     [Required(ErrorMessage = "Recipe images - required field.")]
@@ -20,7 +24,7 @@ public class Recipe
     public DateTime CreationDate { get; set; }
     public TimeSpan PreparationTime { get; set; }
     public int SavedCount { get; set; }    
-    [ForeignKey("AuthorId")]
-    public ApplicationUser Author { get; set; }
+    [ForeignKey("Id")]
+    public User Author { get; set; }
 }
 

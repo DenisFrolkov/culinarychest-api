@@ -1,9 +1,12 @@
+using System.Security.Claims;
 using AutoMapper;
 using Contracts;
 using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -17,12 +20,15 @@ public class ApplicationUserRecipeV2Controller : ControllerBase
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
+    private readonly UserManager<User> _userManager;
 
-    public ApplicationUserRecipeV2Controller(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+
+    public ApplicationUserRecipeV2Controller(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, UserManager<User> userManager)
     {
         _repository = repository;
         _logger = logger;
         _mapper = mapper;
+        _userManager = userManager;
     }
 
     [HttpGet(Name = "GetApplicationUserRecipesByAuthorId")]
@@ -41,24 +47,29 @@ public class ApplicationUserRecipeV2Controller : ControllerBase
         return Ok(recipesDto);
     }
 
-    [HttpPost]
+    [HttpPost, Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> CreateApplicationUserRecipe(string authorId, [FromBody] CreateRecipeDto recipe)
+    public async Task<IActionResult> CreateApplicationUserRecipe([FromBody] CreateRecipeDto recipe)
     {
-        var applicationUser = await _repository.ApplicationUser.GetApplicationUser(authorId, trackChanges: false);
-        if (applicationUser == null)
+        var userName = User.FindFirstValue(ClaimTypes.Name);
+        var user = await _userManager.FindByNameAsync(userName);
+        if (user == null)
         {
-            _logger.LogInfo($"ApplicationUser with id: {authorId} doesn't exist in the database.");
-            return NotFound();
+            _logger.LogInfo("Current user not found.");
+            return Unauthorized();
         }
+
         var recipeEntity = _mapper.Map<Recipe>(recipe);
-        _repository.Recipe.CreateApplicationUserRecipe(authorId, recipeEntity);
+        recipeEntity.Id = user.Id; // Set the AuthorId to current user's Id
+        _repository.Recipe.CreateApplicationUserRecipe(user.Id, recipeEntity);
         await _repository.SaveAsync();
+        var successMessage = "Recipe has been created successfully.";
         var recipeToReturn = _mapper.Map<RecipeDto>(recipeEntity);
         return CreatedAtRoute("GetApplicationUserRecipesByAuthorId", new
         {
-            authorId, id = recipeToReturn.RecipeId
-        }, recipeToReturn);
+            authorId = user.Id,
+            id = recipeToReturn.RecipeId
+        }, successMessage);
     }
 
     [HttpDelete("{recipeId}")]
