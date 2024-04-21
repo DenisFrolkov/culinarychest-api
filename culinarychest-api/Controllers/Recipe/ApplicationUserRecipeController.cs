@@ -50,12 +50,12 @@ public class ApplicationUserRecipeController : ControllerBase
         var userName = User.FindFirstValue(ClaimTypes.Name);
         var user = await _userManager.FindByNameAsync(userName);
         var recipeEntity = _mapper.Map<Recipe>(recipe);
-        recipeEntity.AuthorId = user.Id; 
+        recipeEntity.Id = user.Id; 
         _repository.Recipe.CreateApplicationUserRecipe(user.Id, recipeEntity);
         await _repository.SaveAsync();
         var successMessage = "Recipe has been created successfully.";
         var recipeToReturn = _mapper.Map<RecipeDto>(recipeEntity);
-        return CreatedAtRoute("GetApplicationUserRecipesByAuthorId", new
+        return CreatedAtRoute(new
         {
             authorId = user.Id,
             id = recipeToReturn.RecipeId

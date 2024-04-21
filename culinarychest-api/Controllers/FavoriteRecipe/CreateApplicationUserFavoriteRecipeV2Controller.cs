@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/applicationUser/{recipeId}")]
 [ApiController]
 public class CreateApplicationUserFavoriteRecipeV2Controller : ControllerBase
@@ -46,7 +46,7 @@ public class CreateApplicationUserFavoriteRecipeV2Controller : ControllerBase
         _repository.FavoriteRecipe.CreateApplicationUserFavoriteRecipe(user.Id, recipeId, favoriteRecipeEntity);
         await _repository.SaveAsync();
         var favoriteRecipeToReturn = _mapper.Map<FavoriteRecipeDto>(favoriteRecipeEntity);
-        return CreatedAtRoute("GetFavoriteRecipeForApplicationUserByAuthorId", new
+        return CreatedAtRoute(new
         {
             user.Id, id = favoriteRecipeToReturn.FavoriteRecipeId
         }, favoriteRecipeToReturn);

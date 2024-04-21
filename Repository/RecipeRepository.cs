@@ -27,7 +27,7 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
         ApplicationUserRecipeParameters applicationUserRecipeParameters, bool trackChanges)
     {
         var recipe =  await FindByCondition(recipe =>
-                recipe.AuthorId.Equals(authorId), trackChanges)
+                recipe.Id.Equals(authorId), trackChanges)
             .OrderBy(e => e.Title)
             .Skip((applicationUserRecipeParameters.PageNumber - 1) * applicationUserRecipeParameters.PageSize)
             .Take(applicationUserRecipeParameters.PageSize)
@@ -38,7 +38,7 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
 
     public async Task<Recipe> GetApplicationUserRecipeAsync(string authorId, int recipeId, bool trackChanges) =>
         await FindByCondition(recipe => 
-            recipe.AuthorId.Equals(authorId) && recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefaultAsync();
+            recipe.Id.Equals(authorId) && recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefaultAsync();
 
     public async Task<Recipe> GetRecipeAsync(int recipeId, bool trackChanges) =>
         await FindByCondition(recipe => 
@@ -46,7 +46,7 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
 
     public void CreateApplicationUserRecipe(string authorId, Recipe recipe)
     {
-        recipe.AuthorId = authorId;
+        recipe.Id = authorId;
         Create(recipe);
     }
     public void DeleteRecipe(Recipe recipe)

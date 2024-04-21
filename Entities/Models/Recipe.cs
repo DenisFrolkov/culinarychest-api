@@ -11,7 +11,7 @@ public class Recipe
     public int RecipeId { get; set; }
     
     [ForeignKey("Author")]
-    public string AuthorId { get; set; }
+    public string Id { get; set; }
     
     [Required(ErrorMessage = "Recipe title - required field.")]
     public string Title { get; set; }
@@ -24,7 +24,5 @@ public class Recipe
     public DateTime CreationDate { get; set; }
     public TimeSpan PreparationTime { get; set; }
     public int SavedCount { get; set; }    
-    [ForeignKey("Id")]
-    public ApplicationUser Author { get; set; }
 }
 

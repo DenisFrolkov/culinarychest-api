@@ -44,10 +44,10 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
         var user = await _userManager.FindByNameAsync(userName);
         
         var favoriteRecipeEntity = _mapper.Map<FavoriteRecipe>(favoriteRecipe);
-         _repository.FavoriteRecipe.CreateApplicationUserFavoriteRecipe(user.Id, recipeId, favoriteRecipeEntity);
+        _repository.FavoriteRecipe.CreateApplicationUserFavoriteRecipe(user.Id, recipeId, favoriteRecipeEntity);
         await _repository.SaveAsync();
         var favoriteRecipeToReturn = _mapper.Map<FavoriteRecipeDto>(favoriteRecipeEntity);
-        return CreatedAtRoute("GetFavoriteRecipeForApplicationUserByAuthorId", new
+        return CreatedAtRoute(new
         {
             user.Id, id = favoriteRecipeToReturn.FavoriteRecipeId
         }, favoriteRecipeToReturn);

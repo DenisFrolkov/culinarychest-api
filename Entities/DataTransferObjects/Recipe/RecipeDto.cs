@@ -5,7 +5,7 @@ namespace Entities.DataTransferObjects;
 public class RecipeDto
 {
     public int RecipeId { get; set; }
-    public string AuthorId { get; set; }
+    public string Id { get; set; }
     public string Title { get; set; }
     public byte[] RecipeImage { get; set; }
     public string Ingredients { get; set; }
