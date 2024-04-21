@@ -16,7 +16,7 @@ public class FavoriteRecipe
     public DateTime AddedDate { get; set; }
     
     [ForeignKey("Id")]
-    public User Author { get; set; }
+    public ApplicationUser Author { get; set; }
     
     [ForeignKey("RecipeId")]
     public Recipe Recipe { get; set; }

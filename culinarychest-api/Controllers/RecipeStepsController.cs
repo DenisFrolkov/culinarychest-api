@@ -3,6 +3,7 @@ using Contracts;
 using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,7 @@ public class RecipeStepsController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet(Name = "GetRecipeStepsByRecipeId")]
+    [HttpGet, Authorize]
     public async Task<IActionResult> GetRecipeSteps(int recipeId)
     {
         var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
@@ -39,7 +40,7 @@ public class RecipeStepsController : ControllerBase
         return Ok(stepDto);
     }
 
-    [HttpPost]
+    [HttpPost, Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateRecipeSteps(int recipeId, [FromBody] CreateStepsDto step)
     {
@@ -59,7 +60,7 @@ public class RecipeStepsController : ControllerBase
         }, stepToReturn);
     }
 
-    [HttpPut("{stepId}")]
+    [HttpPut("{stepId}"), Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> UpdateRecipeStep(int recipeId, int stepId, [FromBody] UpdateStepDto step)
     {
@@ -81,7 +82,7 @@ public class RecipeStepsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{stepId}")]
+    [HttpDelete("{stepId}"), Authorize]
     public async Task<IActionResult> DeleteRecipeStep(int recipeId, int stepId)
     {
         var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);

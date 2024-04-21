@@ -1,84 +1,75 @@
+using System.Security.Claims;
 using AutoMapper;
 using Contracts;
 using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("1.0")]
-[Route("api/applicationUser")]
+[Route("api/authentication")]
 [ApiController]
 public class ApplicationUserController : ControllerBase
 {
-    private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IAuthenticationManager _authManager;
 
-    public ApplicationUserController(IRepositoryManager repository, ILoggerManager logger,
-        IMapper mapper)
+    public ApplicationUserController(ILoggerManager logger, IMapper mapper, UserManager<ApplicationUser> userManager,
+        IAuthenticationManager authManager)
     {
-        _repository = repository;
         _logger = logger;
         _mapper = mapper;
+        _userManager = userManager;
+        _authManager = authManager;
     }
-
-    [HttpGet(template: "{userId}", Name = "GetApplicationUserByUserId")]
-    public async Task<IActionResult> GetApplicationUser(string userId)
-    {
-        var applicationUser = await _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: false);
-        if (applicationUser == null)
-        {
-            _logger.LogInfo($"ApplicationUser with id: {userId} doesn't exist in the database.");
-            return NotFound();
-        }
-        else
-        {
-            var applicationUserDto = _mapper.Map<ApplicationUserDto>(applicationUser);
-            return Ok(applicationUserDto);
-        }
-    }
-
-    [HttpPost]
+    
+    [HttpPost("register")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> CreateApplicationUser([FromBody] CreateApplicationUserDtoDto createApplicationUser)
+    public async Task<IActionResult> RegisterUser([FromBody] RegistrationApplicationUserDto registrationApplicationUser)
     {
-        var applicationUserEntity = _mapper.Map<ApplicationUser>(createApplicationUser);
-        _repository.ApplicationUser.CreateApplicationUser(applicationUserEntity);
-        await _repository.SaveAsync();
-        var applicationUserToReturn = _mapper.Map<ApplicationUserDto>(applicationUserEntity);
-        return CreatedAtRoute("GetApplicationUserByUserId", new { Id = applicationUserToReturn.UserId },
-            applicationUserToReturn);
-    }
-
-    [HttpDelete("{userId}")]
-    public async Task<IActionResult> DeleteApplicationUser(string userId)
-    {
-        var applicationUser = await _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: false);
-        if (applicationUser == null)
+        var user = _mapper.Map<ApplicationUser>(registrationApplicationUser);
+        var result = await _userManager.CreateAsync(user, registrationApplicationUser.Password);
+        if (!result.Succeeded)
         {
-            _logger.LogInfo($"ApplicationUser with id: {userId} doesn't exist in the database.");
-            return NotFound();
-        }   
-        _repository.ApplicationUser.DeleteApplicationUser(applicationUser);
-        await _repository.SaveAsync();
-        return NoContent();
-    }
+            foreach (var error in result.Errors)
+            {
+                ModelState.TryAddModelError(error.Code, error.Description);
+            }
 
-    [HttpPut("{userId}")]
+            return BadRequest(ModelState);
+        }
+
+        await _userManager.AddToRolesAsync(user, registrationApplicationUser.Roles);
+        return StatusCode(201);
+    }
+    
+    [HttpPost("login")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> UpdateApplicationUser(string userId, [FromBody] UpdateApplicationUserDtoDto applicationUser)
+    public async Task<IActionResult> Authenticate([FromBody] AuthenticationApplicationUserDto authenticationApplicationUser)
     {
-        var applicationUserEntity = await _repository.ApplicationUser.GetApplicationUser(userId, trackChanges: true);
-        if (applicationUserEntity == null)
+        if (!await _authManager.ValidateUser(authenticationApplicationUser))
         {
-            _logger.LogInfo($"ApplicationUser with id: {userId} doesn't exist in the database.");
+            _logger.LogWarn($"{nameof(Authenticate)}: Authentication failed. Wrong user name or password.");
+            return Unauthorized();
+        }
+        return Ok(new { Token = await _authManager.CreateToken() });
+    }
+    
+    [HttpGet("user"), Authorize]
+    public async Task<IActionResult> GetUserId()
+    {
+        var userName = User.FindFirstValue(ClaimTypes.Name);
+        var user = await _userManager.FindByNameAsync(userName);
+        if (user == null)
+        {
             return NotFound();
         }
-        _mapper.Map(applicationUser, applicationUserEntity);
-        await _repository.SaveAsync();
-        return NoContent();
+        return Ok(new { UserId = user.Id });
     }
 }
 

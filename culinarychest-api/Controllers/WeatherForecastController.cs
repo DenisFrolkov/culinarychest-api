@@ -9,7 +9,6 @@ namespace culinarychest_api.Controllers;
 public class WeatherForecastController : ControllerBase //класс WeatherForecastController наследуется от ControllerBase
 {
     private readonly IRepositoryManager _repository;
-    private ApplicationUser _applicationUser;
     private FavoriteRecipe _favoriteRecipe;
     private Recipe _recipe;
     private Step _step;

@@ -36,7 +36,7 @@ public class RecipeController : ControllerBase
         return Ok(_dataShaper.ShapeData(recipeDto, recipeParameters.Fields));
     }
     
-    [HttpGet(template: "{recipeId}", Name = "RecipeByRecipeId")]
+    [HttpGet(template: "{recipeId}"), Authorize]
     public async Task<IActionResult> GetRecipe(int recipeId)
     {
         var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
@@ -45,10 +45,8 @@ public class RecipeController : ControllerBase
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
-        else
-        { 
-            var recipeDto = _mapper.Map<RecipeDto>(recipe);
-            return Ok(recipeDto);
-        }
+        
+        var recipeDto = _mapper.Map<RecipeDto>(recipe);
+        return Ok(recipeDto);
     }
 }

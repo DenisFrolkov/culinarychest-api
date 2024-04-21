@@ -2,6 +2,7 @@ using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.RequestFeatures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -25,6 +26,7 @@ public class RecipeV2Controller : ControllerBase
         _dataShaper = dataShaper;
     }
     
+    [HttpGet(Name = "GetRecipes"), Authorize]
     public async Task<IActionResult> GetRecipes([FromQuery] RecipeParameters recipeParameters)
     {
         var dbRecipe = await _repository.Recipe.GetRecipesAsync(recipeParameters, trackChanges: false);
@@ -33,7 +35,7 @@ public class RecipeV2Controller : ControllerBase
         return Ok(_dataShaper.ShapeData(recipeDto, recipeParameters.Fields));
     }
     
-    [HttpGet(template: "{recipeId}", Name = "RecipeByRecipeId")]
+    [HttpGet(template: "{recipeId}"), Authorize]
     public async Task<IActionResult> GetRecipe(int recipeId)
     {
         var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
@@ -42,10 +44,8 @@ public class RecipeV2Controller : ControllerBase
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
-        else
-        { 
-            var recipeDto = _mapper.Map<RecipeDto>(recipe);
-            return Ok(recipeDto);
-        }
+        
+        var recipeDto = _mapper.Map<RecipeDto>(recipe);
+        return Ok(recipeDto);
     }
 }

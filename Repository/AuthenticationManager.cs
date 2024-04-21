@@ -14,21 +14,21 @@ namespace Repository;
 public class AuthenticationManager : IAuthenticationManager
 {
     
-    private readonly UserManager<User> _userManager; 
+    private readonly UserManager<ApplicationUser> _userManager; 
     private readonly IConfiguration _configuration;
-    private User _user;
+    private ApplicationUser _applicationUser;
     
-    public AuthenticationManager(UserManager<User> userManager, IConfiguration configuration)
+    public AuthenticationManager(UserManager<ApplicationUser> userManager, IConfiguration configuration)
     {
         _userManager = userManager;
         _configuration = configuration;
     }
     
-    public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
+    public async Task<bool> ValidateUser(AuthenticationApplicationUserDto authenticationApplicationUserForAuth)
     {
-        _user = await _userManager.FindByNameAsync(userForAuth.UserName);
-        return (_user != null && await _userManager.CheckPasswordAsync(_user,
-            userForAuth.Password));
+        _applicationUser = await _userManager.FindByNameAsync(authenticationApplicationUserForAuth.UserName);
+        return (_applicationUser != null && await _userManager.CheckPasswordAsync(_applicationUser,
+            authenticationApplicationUserForAuth.Password));
     }
     public async Task<string> CreateToken()
     {
@@ -59,9 +59,9 @@ public class AuthenticationManager : IAuthenticationManager
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, _user.UserName)
+            new Claim(ClaimTypes.Name, _applicationUser.UserName)
         };
-        var roles = await _userManager.GetRolesAsync(_user); foreach (var role in roles)
+        var roles = await _userManager.GetRolesAsync(_applicationUser); foreach (var role in roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role)); 
         }
