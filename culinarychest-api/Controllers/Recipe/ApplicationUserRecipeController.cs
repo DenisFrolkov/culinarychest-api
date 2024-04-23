@@ -39,15 +39,18 @@ public class ApplicationUserRecipeController : ControllerBase
     {
         var userName = User.FindFirstValue(ClaimTypes.Name);
         var user = await _userManager.FindByNameAsync(userName);
-        var dbRecipes = await _repository.Recipe.GetApplicationUserRecipesAsync(user.Id, applicationUserRecipeParameters, 
-            trackChanges: false);
+        var dbRecipes = await _repository.Recipe.GetApplicationUserRecipesAsync(user.Id, applicationUserRecipeParameters, trackChanges: false);
+        foreach (var recipe in dbRecipes)
+        {
+            recipe.Steps = await _repository.Step.GetRecipeSteps(recipe.RecipeId, trackChanges: false);
+        }
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dbRecipes.MetaData));
         var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(dbRecipes);
         return Ok(recipesDto);
     }
 
     /// <summary>
-    /// Создание рецептов созданных пользователем
+    /// Создание рецептов пользователем
     /// </summary>
     /// <returns> Успешное создание рецепта</returns>.
     [HttpPost, Authorize]

@@ -34,6 +34,10 @@ public class RecipeController : ControllerBase
     public async Task<IActionResult> GetRecipes([FromQuery] RecipeParameters recipeParameters)
     {
         var dbRecipe = await _repository.Recipe.GetRecipesAsync(recipeParameters, trackChanges: false);
+        foreach (var recipe in dbRecipe)
+        {
+            recipe.Steps = await _repository.Step.GetRecipeSteps(recipe.RecipeId, trackChanges: false);
+        }
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dbRecipe.MetaData));
         var recipeDto = _mapper.Map<IEnumerable<RecipeDto>>(dbRecipe);
         return Ok(_dataShaper.ShapeData(recipeDto, recipeParameters.Fields));
