@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace culinarychest_api.Controllers;
 
 [ApiVersion("1.0")]
-[Route("api/{v:apiversion}/applicationUser/{recipeId}")]
+[Route("api/1.0/applicationUser/{recipeId}")]
 [ApiController]
 public class CreateApplicationUserFavoriteRecipeController : ControllerBase
 {

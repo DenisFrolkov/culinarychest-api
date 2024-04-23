@@ -28,4 +28,13 @@
       <ProjectReference Include="..\Repository\Repository.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Controllers\FavoriteRecipe\version1\" />
+      <Folder Include="Controllers\FavoriteRecipe\version2\" />
+      <Folder Include="Controllers\Recipe\Steps\version1\" />
+      <Folder Include="Controllers\Recipe\Steps\version2\" />
+      <Folder Include="Controllers\Recipe\version1\" />
+      <Folder Include="Controllers\Recipe\version2\" />
+    </ItemGroup>
+
 </Project>

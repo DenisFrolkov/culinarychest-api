@@ -11,17 +11,17 @@ using Newtonsoft.Json;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("1.0")]
-[Route("api/{v:apiversion}/applicationUser/favoriteRecipe")]
+[ApiVersion("2.0")]
+[Route("api/2.0/applicationUser/favoriteRecipe")]
 [ApiController]
-public class ApplicationUserFavoriteRecipeController : ControllerBase
+public class ApplicationUserFavoriteRecipeV2Controller : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger; 
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
     
-    public ApplicationUserFavoriteRecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, UserManager<ApplicationUser> userManager)
+    public ApplicationUserFavoriteRecipeV2Controller(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, UserManager<ApplicationUser> userManager)
     {
         _repository = repository;
         _logger = logger;
