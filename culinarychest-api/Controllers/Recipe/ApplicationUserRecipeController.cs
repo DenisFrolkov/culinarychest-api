@@ -29,7 +29,11 @@ public class ApplicationUserRecipeController : ControllerBase
         _mapper = mapper;
         _userManager = userManager;
     }
-
+    
+    /// <summary>
+    /// Вывод всех рецептов созданных пользователем
+    /// </summary>
+    /// <returns> Список рецептов созданных пользователем</returns>.
     [HttpGet, Authorize]
     public async Task<IActionResult> GetApplicationUserRecipes([FromQuery] ApplicationUserRecipeParameters applicationUserRecipeParameters)
     {
@@ -42,6 +46,10 @@ public class ApplicationUserRecipeController : ControllerBase
         return Ok(recipesDto);
     }
 
+    /// <summary>
+    /// Создание рецептов созданных пользователем
+    /// </summary>
+    /// <returns> Успешное создание рецепта</returns>.
     [HttpPost, Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateApplicationUserRecipe([FromBody] CreateRecipeDto recipe)
@@ -61,6 +69,10 @@ public class ApplicationUserRecipeController : ControllerBase
         }, successMessage);
     }
     
+    /// <summary>
+    /// Удаление рецепта пользователем
+    /// </summary>
+    /// <returns> Успешное удаление рецепта</returns>.
     [HttpDelete("{recipeId}"), Authorize]
     public async Task<IActionResult> DeleteApplicationUserRecipe(int recipeId)
     {
@@ -78,6 +90,10 @@ public class ApplicationUserRecipeController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Изменение рецепта пользователем
+    /// </summary>
+    /// <returns> Успешное изменение рецепта</returns>.
     [HttpPut("{recipeId}"), Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> UpdateApplicationUserRecipe(int recipeId, [FromBody] UpdateRecipeDto recipe)

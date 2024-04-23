@@ -24,6 +24,10 @@ public class RecipeStepsController : ControllerBase
         _mapper = mapper;
     }
 
+    /// <summary>
+    /// Вывод всех шагов рецепта
+    /// </summary>
+    /// <returns> Список созданных шагов рецептов</returns>.
     [HttpGet, Authorize]
     public async Task<IActionResult> GetRecipeSteps(int recipeId)
     {
@@ -38,7 +42,11 @@ public class RecipeStepsController : ControllerBase
         var stepDto = _mapper.Map<IEnumerable<StepDto>>(stepsFromDb);
         return Ok(stepDto);
     }
-
+    
+    /// <summary>
+    /// Создать шаги рецепта
+    /// </summary>
+    /// <returns> Список шагов рецепта</returns>.
     [HttpPost, Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateRecipeSteps(int recipeId, [FromBody] CreateStepsDto step)
@@ -59,6 +67,10 @@ public class RecipeStepsController : ControllerBase
         }, stepToReturn);
     }
 
+    /// <summary>
+    /// Изменить шаг рецепта
+    /// </summary>
+    /// <returns> Успешное изменение рецепта</returns>.
     [HttpPut("{stepId}"), Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> UpdateRecipeStep(int recipeId, int stepId, [FromBody] UpdateStepDto step)
@@ -81,6 +93,10 @@ public class RecipeStepsController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Удалить шаг рецепта
+    /// </summary>
+    /// <returns> Успешное удаление рецепта</returns>.
     [HttpDelete("{stepId}"), Authorize]
     public async Task<IActionResult> DeleteRecipeStep(int recipeId, int stepId)
     {

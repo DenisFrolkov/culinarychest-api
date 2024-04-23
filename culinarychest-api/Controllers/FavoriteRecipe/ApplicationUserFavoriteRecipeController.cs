@@ -28,6 +28,10 @@ public class ApplicationUserFavoriteRecipeController : ControllerBase
         _userManager = userManager;
     }
 
+    /// <summary>
+    /// Получить список всех рецептов сохранненых пользователем
+    /// </summary>
+    /// <returns> Список сохранненых рецептов пользователя</returns>.
     [HttpGet, Authorize]
     public async Task<IActionResult> GetApplicationUserFavoriteRecipes( [FromQuery] ApplicationUserFavoriteRecipeParameters applicationUserFavoriteRecipeParameters)
     {
@@ -40,6 +44,10 @@ public class ApplicationUserFavoriteRecipeController : ControllerBase
         return Ok(favoriteRecipeDto);
     }
     
+    /// <summary>
+    /// Удалить рецепта из сохраненных пользователем
+    /// </summary>
+    /// <returns> Успешное удаление рецепта из сохранненых</returns>.
     [HttpDelete("{favoriteRecipeId}"), Authorize]
     public async Task<IActionResult> DeleteApplicationUserFavoriteRecipe(int favoriteRecipeId)
     {

@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using Contracts;
 using Entities;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Repository;
 
 namespace culinarychest_api.Extensions;
@@ -58,6 +60,50 @@ public static class ServiceExtensions
         });
         builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
         builder.AddEntityFrameworkStores<RepositoryContext>() .AddDefaultTokenProviders();
+    }
+    
+    public static void ConfigureSwagger(this IServiceCollection services)
+    {
+        services.AddSwaggerGen(s =>
+        {
+            s.SwaggerDoc("default", new OpenApiInfo
+            {
+                Title = "Culinary Chest API",
+                Description = "CulinaryChestAPI by CulinaryChest",
+                Contact = new OpenApiContact
+                {
+                    Name = "Denis Frolkov",
+                    Email = "denisfrolkov3@gmail.com",
+                    Url = new Uri("https://t.me/o2232")
+                }
+            });
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            s.IncludeXmlComments(xmlPath);
+            s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Place to add JWT with Bearer",
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+            s.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                        Name = "Bearer",
+                    },
+                    new List<string>()
+                }
+            });
+        });
     }
     
     public static void ConfigureIISIntegration(this IServiceCollection services)

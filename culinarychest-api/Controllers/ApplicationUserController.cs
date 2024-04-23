@@ -28,6 +28,10 @@ public class ApplicationUserController : ControllerBase
         _authManager = authManager;
     }
     
+    /// <summary>
+    /// Регистрация пользователя
+    /// </summary>
+    /// <returns> Успешная регистрация</returns>.
     [HttpPost("register")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> RegisterUser([FromBody] RegistrationApplicationUserDto registrationApplicationUser)
@@ -48,6 +52,10 @@ public class ApplicationUserController : ControllerBase
         return StatusCode(201);
     }
     
+    /// <summary>
+    /// Авторизация пользователя
+    /// </summary>
+    /// <returns> Успешная авторизация</returns>.
     [HttpPost("login")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> Authenticate([FromBody] AuthenticationApplicationUserDto authenticationApplicationUser)
@@ -60,6 +68,10 @@ public class ApplicationUserController : ControllerBase
         return Ok(new { Token = await _authManager.CreateToken() });
     }
     
+    /// <summary>
+    /// Получение ID пользоваеля
+    /// </summary>
+    /// <returns> Получение ID пользователя </returns>.
     [HttpGet("user"), Authorize]
     public async Task<IActionResult> GetUserId()
     {

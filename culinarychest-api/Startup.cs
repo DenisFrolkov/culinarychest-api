@@ -1,3 +1,4 @@
+using System.Reflection;
 using Contracts;
 using culinarychest_api.ActionFilters;
 using culinarychest_api.Extensions;
@@ -50,6 +51,7 @@ public class Startup
         services.ConfigureIdentity();
         services.ConfigureJWT(Configuration);
         services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+        services.ConfigureSwagger();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
@@ -74,6 +76,11 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
+        });
+        app.UseSwagger(); 
+        app.UseSwaggerUI(s =>
+        {
+            s.SwaggerEndpoint("/swagger/default/swagger.json", "Culinary Chest API");
         });
     }
 }

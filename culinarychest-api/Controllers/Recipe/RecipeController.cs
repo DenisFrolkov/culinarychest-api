@@ -26,6 +26,10 @@ public class RecipeController : ControllerBase
         _dataShaper = dataShaper;
     }
     
+    /// <summary>
+    /// Вывод всех рецептов
+    /// </summary>
+    /// <returns> Список рецептов</returns>.
     [HttpGet(Name = "GetRecipes"), Authorize]
     public async Task<IActionResult> GetRecipes([FromQuery] RecipeParameters recipeParameters)
     {
@@ -35,6 +39,10 @@ public class RecipeController : ControllerBase
         return Ok(_dataShaper.ShapeData(recipeDto, recipeParameters.Fields));
     }
     
+    /// <summary>
+    /// Вывод рецепта по ID
+    /// </summary>
+    /// <returns> Рецепт с конкретным ID </returns>.
     [HttpGet(template: "{recipeId}"), Authorize]
     public async Task<IActionResult> GetRecipe(int recipeId)
     {

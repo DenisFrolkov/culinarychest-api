@@ -28,6 +28,10 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
         _userManager = userManager;
     }
     
+    /// <summary>
+    /// Добавить рецепт в сохранненые пользователем
+    /// </summary>
+    /// <returns> Успешное сохранение рецепта в сохраненные пользователем</returns>.
     [HttpPost, Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateApplicationUserFavoriteRecipe(int recipeId, [FromBody] CreateFavoriteRecipeDtoDto favoriteRecipe)
