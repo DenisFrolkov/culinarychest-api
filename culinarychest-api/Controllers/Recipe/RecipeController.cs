@@ -1,6 +1,7 @@
 using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,17 +9,16 @@ using Newtonsoft.Json;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("2.0")]
-[Route("api/1.0/recipe")]
+[Route("api/recipe")]
 [ApiController]
-public class RecipeV2Controller : ControllerBase
+public class RecipeController : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
     private readonly IDataShaper<RecipeDto> _dataShaper;
 
-    public RecipeV2Controller(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IDataShaper<RecipeDto> dataShaper)
+    public RecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IDataShaper<RecipeDto> dataShaper)
     {
         _repository = repository;
         _logger = logger;

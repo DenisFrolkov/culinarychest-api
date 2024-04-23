@@ -46,7 +46,6 @@ public class Startup
         });
         services.AddScoped<ValidationFilterAttribute>();
         services.AddScoped <IDataShaper<RecipeDto>, DataShaper<RecipeDto>>();
-        services.ConfigureVersioning();
         services.AddAuthentication(); 
         services.ConfigureIdentity();
         services.ConfigureJWT(Configuration);

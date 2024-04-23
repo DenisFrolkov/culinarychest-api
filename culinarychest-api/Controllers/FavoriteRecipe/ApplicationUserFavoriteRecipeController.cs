@@ -11,8 +11,7 @@ using Newtonsoft.Json;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("1.0")]
-[Route("api/1.0/applicationUser/favoriteRecipe")]
+[Route("api/applicationUser/favoriteRecipe")]
 [ApiController]
 public class ApplicationUserFavoriteRecipeController : ControllerBase
 {

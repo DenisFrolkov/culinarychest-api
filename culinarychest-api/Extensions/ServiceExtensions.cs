@@ -59,16 +59,6 @@ public static class ServiceExtensions
         builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
         builder.AddEntityFrameworkStores<RepositoryContext>() .AddDefaultTokenProviders();
     }
-
-    public static void ConfigureVersioning(this IServiceCollection services)
-    {
-        services.AddApiVersioning(opt =>
-        {
-            opt.ReportApiVersions = true;
-            opt.AssumeDefaultVersionWhenUnspecified = true;
-            opt.DefaultApiVersion = new ApiVersion(1, 0);
-        });
-    }
     
     public static void ConfigureIISIntegration(this IServiceCollection services)
         => services.Configure<IISOptions>(options => { }); 

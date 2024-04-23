@@ -5,22 +5,22 @@ using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("2.0")]
-[Route("api/2.0/applicationUser/{recipeId}")]
+[Route("api/applicationUser/{recipeId}")]
 [ApiController]
-public class CreateApplicationUserFavoriteRecipeV2Controller : ControllerBase
+public class CreateApplicationUserFavoriteRecipeController : ControllerBase
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
     
-    public CreateApplicationUserFavoriteRecipeV2Controller(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, UserManager<ApplicationUser> userManager)
+    public CreateApplicationUserFavoriteRecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, UserManager<ApplicationUser> userManager)
     {
         _repository = repository;
         _logger = logger;

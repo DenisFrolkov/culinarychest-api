@@ -10,7 +10,6 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.16" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.15"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.16">
           <PrivateAssets>all</PrivateAssets>
@@ -26,15 +25,6 @@
     <ItemGroup>
       <ProjectReference Include="..\LoggerService\LoggerService.csproj" />
       <ProjectReference Include="..\Repository\Repository.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Controllers\FavoriteRecipe\version1\" />
-      <Folder Include="Controllers\FavoriteRecipe\version2\" />
-      <Folder Include="Controllers\Recipe\Steps\version1\" />
-      <Folder Include="Controllers\Recipe\Steps\version2\" />
-      <Folder Include="Controllers\Recipe\version1\" />
-      <Folder Include="Controllers\Recipe\version2\" />
     </ItemGroup>
 
 </Project>

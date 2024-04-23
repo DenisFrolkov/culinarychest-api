@@ -9,8 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace culinarychest_api.Controllers;
 
-[ApiVersion("1.0")]
-[Route("api/1.0/recipe/{recipeId}/steps")]
+[Route("api/recipe/{recipeId}/steps")]
 [ApiController]
 public class RecipeStepsController : ControllerBase
 {
