@@ -40,7 +40,15 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
         await FindByCondition(recipe => 
             recipe.Id.Equals(authorId) && recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefaultAsync();
 
-    public async Task<Recipe> GetRecipeAsync(int recipeId, bool trackChanges) =>
+    public async Task<PagedList<Recipe>> GetRecipeAsync(int recipeId, RecipeParameters recipeParameters, bool trackChanges)
+    {
+        var recipe = await FindByCondition(recipe =>
+                recipe.RecipeId.Equals(recipeId), trackChanges)
+            .ToListAsync();
+        return PagedList<Recipe>.ToPagedList(recipe, recipeParameters.PageNumber, recipeParameters.PageSize);
+    }
+    
+    public async Task<Recipe> GetRecipe(int recipeId, bool trackChanges) =>
         await FindByCondition(recipe => 
             recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefaultAsync();
 

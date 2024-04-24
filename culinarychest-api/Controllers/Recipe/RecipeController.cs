@@ -48,16 +48,22 @@ public class RecipeController : ControllerBase
     /// </summary>
     /// <returns> Рецепт с конкретным ID </returns>.
     [HttpGet(template: "{recipeId}"), Authorize]
-    public async Task<IActionResult> GetRecipe(int recipeId)
+    public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] RecipeParameters recipeParameters)
     {
-        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
-        if (recipe == null)
+        var dbRecipes = await _repository.Recipe.GetRecipeAsync(recipeId, recipeParameters, trackChanges: false);
+        
+        if (dbRecipes == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
         
-        var recipeDto = _mapper.Map<RecipeDto>(recipe);
-        return Ok(recipeDto);
+        foreach (var recipe in dbRecipes)
+        {
+            recipe.Steps = await _repository.Step.GetRecipeSteps(recipe.RecipeId, trackChanges: false);
+        }
+        Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dbRecipes.MetaData));
+        var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(dbRecipes);
+        return Ok(recipesDto);
     }
 }

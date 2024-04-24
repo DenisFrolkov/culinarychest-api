@@ -99,9 +99,9 @@ public class ApplicationUserRecipeController : ControllerBase
     /// <returns> Успешное изменение рецепта</returns>.
     [HttpPut("{recipeId}"), Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> UpdateApplicationUserRecipe(int recipeId, [FromBody] UpdateRecipeDto recipe)
+    public async Task<IActionResult> UpdateApplicationUserRecipe(int recipeId, UpdateRecipeDto recipe)
     {
-        var recipeEntity = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: true);
+        var recipeEntity = await _repository.Recipe.GetRecipe(recipeId, trackChanges: true);
         if (recipeEntity == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");

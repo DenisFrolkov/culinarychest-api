@@ -4,6 +4,7 @@ using Contracts;
 using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -34,9 +35,9 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
     /// <returns> Успешное сохранение рецепта в сохраненные пользователем</returns>.
     [HttpPost, Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> CreateApplicationUserFavoriteRecipe(int recipeId, [FromBody] CreateFavoriteRecipeDtoDto favoriteRecipe)
+    public async Task<IActionResult> CreateApplicationUserFavoriteRecipe(int recipeId, CreateFavoriteRecipeDtoDto favoriteRecipe)
     {
-        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
@@ -51,7 +52,6 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
         await _repository.SaveAsync();
         var successMessage = "You successfully saved the recipe.";
         var favoriteRecipeToReturn = _mapper.Map<FavoriteRecipeDto>(favoriteRecipeEntity);
-        return CreatedAtRoute(new { UserId = user.Id, Id = favoriteRecipeToReturn.FavoriteRecipeId }, successMessage);
-
+        return CreatedAtRoute(new { UserId = user.Id, Id = favoriteRecipeToReturn.FavoriteRecipeId }, favoriteRecipeToReturn);
     }
 }

@@ -3,6 +3,7 @@ using Contracts;
 using culinarychest_api.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,7 @@ public class RecipeStepsController : ControllerBase
     [HttpGet, Authorize]
     public async Task<IActionResult> GetRecipeSteps(int recipeId)
     {
-        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"ApplicationUser with id: {recipeId} doesn't exist in the database.");
@@ -49,9 +50,9 @@ public class RecipeStepsController : ControllerBase
     /// <returns> Список шагов рецепта</returns>.
     [HttpPost, Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> CreateRecipeSteps(int recipeId, [FromBody] CreateStepsDto step)
+    public async Task<IActionResult> CreateRecipeSteps(int recipeId, CreateStepsDto step)
     {
-        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
@@ -73,9 +74,9 @@ public class RecipeStepsController : ControllerBase
     /// <returns> Успешное изменение рецепта</returns>.
     [HttpPut("{stepId}"), Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> UpdateRecipeStep(int recipeId, int stepId, [FromBody] UpdateStepDto step)
+    public async Task<IActionResult> UpdateRecipeStep(int recipeId, int stepId, UpdateStepDto step)
     {
-        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
@@ -98,9 +99,9 @@ public class RecipeStepsController : ControllerBase
     /// </summary>
     /// <returns> Успешное удаление рецепта</returns>.
     [HttpDelete("{stepId}"), Authorize]
-    public async Task<IActionResult> DeleteRecipeStep(int recipeId, int stepId)
+    public async Task<IActionResult> DeleteRecipeStep(int recipeId, int stepId, [FromQuery] RecipeParameters recipeParameters)
     {
-        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, recipeParameters, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
