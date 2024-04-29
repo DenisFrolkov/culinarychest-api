@@ -81,7 +81,7 @@ public class ApplicationUserController : ControllerBase
         {
             return NotFound();
         }
-        return Ok(new { UserId = user.Id });
+        return Ok(new { UserId = user.Id, UserName = user.UserName, Email = user.Email });
     }
 }
 
