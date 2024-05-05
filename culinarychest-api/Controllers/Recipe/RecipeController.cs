@@ -30,7 +30,7 @@ public class RecipeController : ControllerBase
     /// Вывод всех рецептов
     /// </summary>
     /// <returns> Список рецептов</returns>.
-    [HttpGet(Name = "GetRecipes"), Authorize]
+    [HttpGet("listRecipe"), Authorize]
     public async Task<IActionResult> GetRecipes([FromQuery] RecipeParameters recipeParameters)
     {
         var dbRecipe = await _repository.Recipe.GetRecipesAsync(recipeParameters, trackChanges: false);
@@ -44,13 +44,40 @@ public class RecipeController : ControllerBase
     }
     
     /// <summary>
+    /// Вывод рецептов по их recipeId
+    /// </summary>
+    /// <returns> Рецепты с конкретными recipeId </returns>.
+    [HttpGet("listRecipeByIds"), Authorize]
+    public async Task<IActionResult> GetRecipeByRecipeId([FromQuery] List<int> recipeIds, [FromQuery] RecipeParameters recipeParameters)
+    {
+        var dbRecipes = await _repository.Recipe.GetRecipeByIdsAsync(recipeIds, recipeParameters, trackChanges: false);
+    
+        if (dbRecipes == null)
+        {
+            _logger.LogInfo($"Recipes with ids: {string.Join(",", recipeIds)} don't exist in the database.");
+            return NotFound();
+        }
+    
+        foreach (var recipe in dbRecipes)
+        {
+            recipe.Steps = await _repository.Step.GetRecipeSteps(recipe.RecipeId, trackChanges: false);
+        }
+    
+        // Здесь можно добавить пагинацию, если это необходимо
+        Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dbRecipes.MetaData));
+
+        var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(dbRecipes);
+        return Ok(recipesDto);
+    }
+    
+    /// <summary>
     /// Вывод рецепта по ID
     /// </summary>
     /// <returns> Рецепт с конкретным ID </returns>.
     [HttpGet(template: "{recipeId}"), Authorize]
-    public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] RecipeParameters recipeParameters)
+    public async Task<IActionResult> GetRecipeByIds(int recipeId, [FromQuery] RecipeParameters recipeParameters)
     {
-        var dbRecipes = await _repository.Recipe.GetRecipeAsync(recipeId, recipeParameters, trackChanges: false);
+        var dbRecipes = await _repository.Recipe.GetRecipeByIdsAsync(recipeId, recipeParameters, trackChanges: false);
         
         if (dbRecipes == null)
         {
@@ -66,4 +93,5 @@ public class RecipeController : ControllerBase
         var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(dbRecipes);
         return Ok(recipesDto);
     }
+
 }

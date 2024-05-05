@@ -22,6 +22,19 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
         return PagedList<Recipe>
             .ToPagedList(recipe, recipeParameters.PageNumber, recipeParameters.PageSize);
     }
+    
+    public async Task<PagedList<Recipe>> GetRecipeByIdsAsync(List<int> recipeIds, RecipeParameters recipeParameters, bool trackChanges)
+    {
+        var query = FindAll(trackChanges)
+            .Where(r => recipeIds.Contains(r.RecipeId)) 
+            .Search(recipeParameters.SearchTerm)
+            .OrderBy(e => e.Title);
+
+        var recipes = await query.ToListAsync();
+    
+        return PagedList<Recipe>.ToPagedList(recipes, recipeParameters.PageNumber, recipeParameters.PageSize);
+    }
+
 
     public async Task<PagedList<Recipe>> GetApplicationUserRecipesAsync(string authorId,
         ApplicationUserRecipeParameters applicationUserRecipeParameters, bool trackChanges)
@@ -40,7 +53,7 @@ public class RecipeRepository: RepositoryBase<Recipe>, IRecipeRepository
         await FindByCondition(recipe => 
             recipe.Id.Equals(authorId) && recipe.RecipeId.Equals(recipeId), trackChanges).SingleOrDefaultAsync();
 
-    public async Task<PagedList<Recipe>> GetRecipeAsync(int recipeId, RecipeParameters recipeParameters, bool trackChanges)
+    public async Task<PagedList<Recipe>> GetRecipeByIdsAsync(int recipeId, RecipeParameters recipeParameters, bool trackChanges)
     {
         var recipe = await FindByCondition(recipe =>
                 recipe.RecipeId.Equals(recipeId), trackChanges)

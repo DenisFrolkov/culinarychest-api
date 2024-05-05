@@ -14,7 +14,7 @@ public class FavoriteRecipe
     public string Id { get; set; }
     public int RecipeId { get; set; }
     [Required(ErrorMessage = "Data is required.")]
-    public DateTime AddedDate { get; set; }
+    public string AddedDate { get; set; }
     
     [ForeignKey("RecipeId")]
     public Recipe Recipe { get; set; }

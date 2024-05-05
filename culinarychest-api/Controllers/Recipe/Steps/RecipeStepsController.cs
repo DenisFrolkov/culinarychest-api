@@ -62,7 +62,7 @@ public class RecipeStepsController : ControllerBase
         _repository.Step.CreateRecipeStep(recipeId, stepEntity);
         await _repository.SaveAsync();
         var stepToReturn = _mapper.Map<StepDto>(stepEntity);
-        return CreatedAtRoute("GetRecipeStepsByRecipeId", new
+        return CreatedAtRoute(new
         {
             recipeId, id = stepToReturn.StepId
         }, stepToReturn);
@@ -101,7 +101,7 @@ public class RecipeStepsController : ControllerBase
     [HttpDelete("{stepId}"), Authorize]
     public async Task<IActionResult> DeleteRecipeStep(int recipeId, int stepId, [FromQuery] RecipeParameters recipeParameters)
     {
-        var recipe = await _repository.Recipe.GetRecipeAsync(recipeId, recipeParameters, trackChanges: false);
+        var recipe = await _repository.Recipe.GetRecipeByIdsAsync(recipeId, recipeParameters, trackChanges: false);
         if (recipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");

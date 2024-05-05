@@ -12,7 +12,7 @@ public class MappingProfile : Profile
         CreateMap<Recipe, RecipeDto>();
         CreateMap<Step, StepDto>();
 
-        CreateMap<CreateFavoriteRecipeDtoDto, FavoriteRecipe>();
+        CreateMap<CreateFavoriteRecipeDto, FavoriteRecipe>();
         CreateMap<CreateRecipeDto, Recipe>();
         CreateMap<CreateStepsDto, Step>();
 

@@ -76,10 +76,10 @@ public class AuthenticationManager : IAuthenticationManager
             audience: jwtSettings.GetSection("validAudience").Value, 
             claims: claims,
             expires:
-            DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings.GetSection("expires").Value)
+            DateTime.Now.AddYears((int)Convert.ToDouble(jwtSettings.GetSection("expires").Value)
             ), 
-                signingCredentials: signingCredentials
-            );
+            signingCredentials: signingCredentials
+        );
         return tokenOptions; 
     }
 }

@@ -35,7 +35,7 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
     /// <returns> Успешное сохранение рецепта в сохраненные пользователем</returns>.
     [HttpPost, Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> CreateApplicationUserFavoriteRecipe(int recipeId, CreateFavoriteRecipeDtoDto favoriteRecipe)
+    public async Task<IActionResult> CreateApplicationUserFavoriteRecipe(int recipeId, CreateFavoriteRecipeDto favoriteRecipe)
     {
         var recipe = await _repository.Recipe.GetRecipe(recipeId, trackChanges: false);
         if (recipe == null)
