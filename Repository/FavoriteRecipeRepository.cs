@@ -23,9 +23,14 @@ public class FavoriteRecipeRepository : RepositoryBase<FavoriteRecipe>, IFavorit
                 applicationUserFavoriteRecipeParameters.PageSize);
     }
 
-    public async Task<FavoriteRecipe> GetApplicationUserFavoriteRecipe(string authorId, int favoriteRecipeId, bool trackChanges) =>
+    public async Task<FavoriteRecipe> GetApplicationUserFavoriteRecipe(string authorId, int recipeId, bool trackChanges) =>
         await FindByCondition(favoriteRecipe => 
-                favoriteRecipe.Id.Equals(authorId) && favoriteRecipe.FavoriteRecipeId.Equals(favoriteRecipeId), trackChanges)
+                favoriteRecipe.Id.Equals(authorId) && favoriteRecipe.FavoriteRecipeId.Equals(recipeId), trackChanges)
+            .SingleOrDefaultAsync();
+
+    public async Task<FavoriteRecipe?> GetFavoriteRecipeByRecipeId(string authorId, int recipeId, bool trackChanges) =>
+        await FindByCondition(favoriteRecipe => 
+                favoriteRecipe.Id.Equals(authorId) && favoriteRecipe.RecipeId.Equals(recipeId), trackChanges)
             .SingleOrDefaultAsync();
 
     public void CreateApplicationUserFavoriteRecipe(string authorId, int recipeId, FavoriteRecipe favoriteRecipe)

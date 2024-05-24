@@ -112,10 +112,15 @@ public static class ServiceExtensions
     public static void ConfigureLoggerService(this IServiceCollection services) 
         => services.AddScoped<ILoggerManager, LoggerManager>(); 
     
-    public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) => 
+    // public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) => 
+    //     services.AddDbContext<RepositoryContext>(opts => 
+    //         opts.UseNpgsql(configuration.GetConnectionString("sqlConnection"), b => 
+    //             b.MigrationsAssembly("culinarychest-api"))); 
+    
+    public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
         services.AddDbContext<RepositoryContext>(opts => 
-            opts.UseNpgsql(configuration.GetConnectionString("sqlConnection"), b => 
-                b.MigrationsAssembly("culinarychest-api"))); 
+            opts.UseSqlServer(configuration.GetConnectionString("sqlConnection"), b =>
+                b.MigrationsAssembly("culinarychest-api")));
 
     public static void ConfigureRepositoryManager(this IServiceCollection services) => 
         services.AddScoped<IRepositoryManager, RepositoryManager>();

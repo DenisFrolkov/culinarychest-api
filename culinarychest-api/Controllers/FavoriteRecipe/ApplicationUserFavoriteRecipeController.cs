@@ -43,32 +43,4 @@ public class ApplicationUserFavoriteRecipeController : ControllerBase
         var favoriteRecipeDto = _mapper.Map<IEnumerable<FavoriteRecipeDto>>(dbFavoriteRecipe);
         return Ok(favoriteRecipeDto);
     }
-    
-    /// <summary>
-    /// Удалить рецепта из сохраненных пользователем
-    /// </summary>
-    /// <returns> Успешное удаление рецепта из сохранненых</returns>.
-    [HttpDelete("{favoriteRecipeId}"), Authorize]
-    public async Task<IActionResult> DeleteApplicationUserFavoriteRecipe(int favoriteRecipeId)
-    {
-        try
-        {
-            var userName = User.FindFirstValue(ClaimTypes.Name);
-            var user = await _userManager.FindByNameAsync(userName);
-            var applicationUserFavoriteRecipe = await _repository.FavoriteRecipe.GetApplicationUserFavoriteRecipe(user.Id, favoriteRecipeId, trackChanges: false);
-            if (applicationUserFavoriteRecipe == null)
-            {
-                _logger.LogInfo($"FavoriteRecipe with id: {favoriteRecipeId} doesn't exist in the database.");
-                return NotFound();
-            }
-            _repository.FavoriteRecipe.DeleteFavoriteRecipe(applicationUserFavoriteRecipe);
-            await _repository.SaveAsync();
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error deleting favorite recipe with id {favoriteRecipeId}: {ex}");
-            return StatusCode(500, "Internal server error");
-        }
-    }
 }

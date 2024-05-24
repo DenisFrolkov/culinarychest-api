@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace culinarychest_api.Controllers;
 
@@ -53,5 +54,54 @@ public class CreateApplicationUserFavoriteRecipeController : ControllerBase
         var successMessage = "You successfully saved the recipe.";
         var favoriteRecipeToReturn = _mapper.Map<FavoriteRecipeDto>(favoriteRecipeEntity);
         return CreatedAtRoute(new { UserId = user.Id, Id = favoriteRecipeToReturn.FavoriteRecipeId }, favoriteRecipeToReturn);
+    }
+    
+    /// <summary>
+    /// Удалить рецепта из сохраненных пользователем
+    /// </summary>
+    /// <returns> Успешное удаление рецепта из сохранненых</returns>.
+    [HttpDelete, Authorize]
+    public async Task<IActionResult> DeleteApplicationUserFavoriteRecipe(int recipeId)
+    {
+        try
+        {
+            var userName = User.FindFirstValue(ClaimTypes.Name);
+            var user = await _userManager.FindByNameAsync(userName);
+            
+            var dbFavoriteRecipe = await _repository.FavoriteRecipe.GetFavoriteRecipeByRecipeId(user.Id, recipeId, trackChanges: false);
+            var favoriteRecipeDto = _mapper.Map<FavoriteRecipeDto>(dbFavoriteRecipe);
+            
+            var applicationUserFavoriteRecipe = await _repository.FavoriteRecipe.GetApplicationUserFavoriteRecipe(user.Id, favoriteRecipeDto.FavoriteRecipeId, trackChanges: false);
+            if (applicationUserFavoriteRecipe == null)
+            {
+                _logger.LogInfo($"FavoriteRecipe with id: {recipeId} doesn't exist in the database.");
+                return NotFound();
+            }
+            _repository.FavoriteRecipe.DeleteFavoriteRecipe(applicationUserFavoriteRecipe);
+            await _repository.SaveAsync();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error deleting favorite recipe with id {recipeId}: {ex}");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpGet, Authorize]
+    public async Task<IActionResult> GetFavoriteRecipeByRecipeId(int recipeId)
+    {
+        var userName = User.FindFirstValue(ClaimTypes.Name);
+        var user = await _userManager.FindByNameAsync(userName);
+        
+        var dbFavoriteRecipe = await _repository.FavoriteRecipe.GetFavoriteRecipeByRecipeId(user.Id, recipeId, trackChanges: false);
+        
+        if (dbFavoriteRecipe == null)
+        {
+            _logger.LogInfo($"FR with id: {recipeId} doesn't exist in the database.");
+            return NotFound();
+        }
+        var favoriteRecipeDto = _mapper.Map<FavoriteRecipeDto>(dbFavoriteRecipe);
+        return Ok(favoriteRecipeDto);
     }
 }
