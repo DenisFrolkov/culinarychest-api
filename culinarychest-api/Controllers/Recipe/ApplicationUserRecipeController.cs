@@ -22,28 +22,33 @@ public class ApplicationUserRecipeController : ControllerBase
     private readonly UserManager<ApplicationUser> _userManager;
 
 
-    public ApplicationUserRecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, UserManager<ApplicationUser> userManager)
+    public ApplicationUserRecipeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper,
+        UserManager<ApplicationUser> userManager)
     {
         _repository = repository;
         _logger = logger;
         _mapper = mapper;
         _userManager = userManager;
     }
-    
+
     /// <summary>
     /// Вывод всех рецептов созданных пользователем
     /// </summary>
     /// <returns> Список рецептов созданных пользователем</returns>.
     [HttpGet, Authorize]
-    public async Task<IActionResult> GetApplicationUserRecipes([FromQuery] ApplicationUserRecipeParameters applicationUserRecipeParameters)
+    public async Task<IActionResult> GetApplicationUserRecipes(
+        [FromQuery] ApplicationUserRecipeParameters applicationUserRecipeParameters)
     {
         var userName = User.FindFirstValue(ClaimTypes.Name);
         var user = await _userManager.FindByNameAsync(userName);
-        var dbRecipes = await _repository.Recipe.GetApplicationUserRecipesAsync(user.Id, applicationUserRecipeParameters, trackChanges: false);
+        var dbRecipes =
+            await _repository.Recipe.GetApplicationUserRecipesAsync(user.Id, applicationUserRecipeParameters,
+                trackChanges: false);
         foreach (var recipe in dbRecipes)
         {
             recipe.Steps = await _repository.Step.GetRecipeSteps(recipe.RecipeId, trackChanges: false);
         }
+
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dbRecipes.MetaData));
         var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(dbRecipes);
         return Ok(recipesDto);
@@ -55,14 +60,61 @@ public class ApplicationUserRecipeController : ControllerBase
     /// <returns> Успешное создание рецепта</returns>.
     [HttpPost, Authorize]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> CreateApplicationUserRecipe([FromBody] CreateRecipeDto recipe)
+    public async Task<IActionResult> CreateApplicationUserRecipe([FromForm] CreateRecipeDto recipe)
     {
+        if (recipe == null)
+        {
+            return BadRequest("Recipe data is null.");
+        }
+
         var userName = User.FindFirstValue(ClaimTypes.Name);
+        if (string.IsNullOrEmpty(userName))
+        {
+            return Unauthorized("User not found.");
+        }
+
         var user = await _userManager.FindByNameAsync(userName);
+        if (user == null)
+        {
+            return Unauthorized("User not found.");
+        }
+
+        // Десериализация строки JSON в коллекцию объектов Step
+        ICollection<Step> steps;
+        try
+        {
+            steps = JsonConvert.DeserializeObject<ICollection<Step>>(recipe.steps);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("Invalid steps format.");
+        }
+
+        // Создание модели Recipe и заполнение полей
         var recipeEntity = _mapper.Map<Recipe>(recipe);
-        recipeEntity.Id = user.Id; 
+        recipeEntity.Steps = steps; // Установить десериализованные шаги
+        recipeEntity.Id = user.Id;
+
+        var imagesPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+        if (!Directory.Exists(imagesPath))
+        {
+            Directory.CreateDirectory(imagesPath);
+        }
+
+        if (recipe.RecipeImage != null)
+        {
+            var imagePath = Path.Combine(imagesPath, $"{recipe.RecipeImage.FileName}");
+            using (var stream = new FileStream(imagePath, FileMode.Create))
+            {
+                await recipe.RecipeImage.CopyToAsync(stream);
+            }
+
+            recipeEntity.RecipeImage = imagePath;
+        }
+
         _repository.Recipe.CreateApplicationUserRecipe(user.Id, recipeEntity);
         await _repository.SaveAsync();
+
         var successMessage = "Recipe has been created successfully.";
         var recipeToReturn = _mapper.Map<RecipeDto>(recipeEntity);
         return CreatedAtRoute(new
@@ -71,7 +123,9 @@ public class ApplicationUserRecipeController : ControllerBase
             id = recipeToReturn.RecipeId
         }, successMessage);
     }
-    
+
+
+
     /// <summary>
     /// Удаление рецепта пользователем
     /// </summary>
@@ -81,13 +135,14 @@ public class ApplicationUserRecipeController : ControllerBase
     {
         var userName = User.FindFirstValue(ClaimTypes.Name);
         var user = await _userManager.FindByNameAsync(userName);
-        var applicationUserRecipe = 
+        var applicationUserRecipe =
             await _repository.Recipe.GetApplicationUserRecipeAsync(user.Id, recipeId, trackChanges: false);
         if (applicationUserRecipe == null)
         {
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
+
         _repository.Recipe.DeleteRecipe(applicationUserRecipe);
         await _repository.SaveAsync();
         return NoContent();
@@ -107,6 +162,7 @@ public class ApplicationUserRecipeController : ControllerBase
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
+
         _mapper.Map(recipe, recipeEntity);
         await _repository.SaveAsync();
         return NoContent();

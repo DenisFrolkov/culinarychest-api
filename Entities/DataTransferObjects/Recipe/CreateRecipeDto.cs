@@ -1,20 +1,21 @@
 using System.ComponentModel.DataAnnotations;
 using Entities.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Entities.DataTransferObjects;
 
 public class CreateRecipeDto
 {
     [Required(ErrorMessage = "Recipe title - required field.")]
-    public string Title { get; set; }
-    // [Required(ErrorMessage = "Recipe images - required field.")]
-    // public string RecipeImage { get; set; }
+    public string title { get; set; }
+    [Required(ErrorMessage = "Recipe images - required field.")]
+    public IFormFile RecipeImage { get; set; }
     [Required(ErrorMessage = "Recipe ingredients - required field.")]
-    public string Ingredients { get; set; }
+    public string ingredients { get; set; }
     [Required(ErrorMessage = "A recipe must have at least one field with a recipe pitch.")]
-    public IEnumerable<CreateStepsDto> Steps { get; set; }
+    public string steps { get; set; }
     [Required(ErrorMessage = "Recipe creationDate - required field.")]
-    public string CreationDate { get; set; }
+    public string creationDate { get; set; }
     [Required(ErrorMessage = "Recipe preparationTime - required field.")]
-    public string PreparationTime { get; set; }
+    public string preparationTime { get; set; }
 }

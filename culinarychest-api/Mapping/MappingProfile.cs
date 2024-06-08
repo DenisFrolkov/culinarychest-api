@@ -1,6 +1,7 @@
 using AutoMapper;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Newtonsoft.Json;
 
 namespace culinarychest_api.Mapping;
 
