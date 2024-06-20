@@ -59,77 +59,74 @@ public class ApplicationUserRecipeController : ControllerBase
     /// </summary>
     /// <returns> Успешное создание рецепта</returns>.
     [HttpPost, Authorize]
-[ServiceFilter(typeof(ValidationFilterAttribute))]
-public async Task<IActionResult> CreateApplicationUserRecipe([FromForm] CreateRecipeDto recipe)
-{
-    if (recipe == null)
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
+    public async Task<IActionResult> CreateApplicationUserRecipe([FromForm] CreateRecipeDto recipe)
     {
-        return BadRequest("Recipe data is null.");
-    }
-
-    var userName = User.FindFirstValue(ClaimTypes.Name);
-    if (string.IsNullOrEmpty(userName))
-    {
-        return Unauthorized("User not found.");
-    }
-
-    var user = await _userManager.FindByNameAsync(userName);
-    if (user == null)
-    {
-        return Unauthorized("User not found.");
-    }
-
-    // Десериализация строки JSON в коллекцию объектов Step
-    ICollection<Step> steps;
-    try
-    {
-        steps = JsonConvert.DeserializeObject<ICollection<Step>>(recipe.steps);
-    }
-    catch (Exception ex)
-    {
-        return BadRequest("Invalid steps format.");
-    }
-
-    // Создание модели Recipe и заполнение полей
-    var recipeEntity = new Recipe
-    {
-        Title = recipe.title,
-        Ingredients = recipe.ingredients,
-        CreationDate = recipe.creationDate,
-        PreparationTime = recipe.preparationTime,
-        Steps = steps,
-        Id = user.Id
-    };
-
-    var imagesPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-    if (!Directory.Exists(imagesPath))
-    {
-        Directory.CreateDirectory(imagesPath);
-    }
-
-    if (recipe.RecipeImage != null)
-    {
-        var imagePath = Path.Combine(imagesPath, $"{recipe.RecipeImage.FileName}");
-        using (var stream = new FileStream(imagePath, FileMode.Create))
+        if (recipe == null)
         {
-            await recipe.RecipeImage.CopyToAsync(stream);
+            return BadRequest("Recipe data is null.");
         }
 
-        recipeEntity.RecipeImage = imagePath;
+        var userName = User.FindFirstValue(ClaimTypes.Name);
+        if (string.IsNullOrEmpty(userName))
+        {
+            return Unauthorized("User not found.");
+        }
+
+        var user = await _userManager.FindByNameAsync(userName);
+        if (user == null)
+        {
+            return Unauthorized("User not found.");
+        }
+
+        ICollection<Step> steps;
+        try
+        {
+            steps = JsonConvert.DeserializeObject<ICollection<Step>>(recipe.steps);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("Invalid steps format.");
+        }
+
+        var recipeEntity = new Recipe
+        {
+            Title = recipe.title,
+            Ingredients = recipe.ingredients,
+            CreationDate = recipe.creationDate,
+            PreparationTime = recipe.preparationTime,
+            Steps = steps,
+            Id = user.Id
+        };
+
+        var imagesPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+        if (!Directory.Exists(imagesPath))
+        {
+            Directory.CreateDirectory(imagesPath);
+        }
+
+        if (recipe.RecipeImage != null)
+        {
+            var imagePath = Path.Combine(imagesPath, $"{Guid.NewGuid()}_{recipe.RecipeImage.FileName}.png");
+            using (var stream = new FileStream(imagePath, FileMode.Create))
+            {
+                await recipe.RecipeImage.CopyToAsync(stream);
+            }
+
+            recipeEntity.RecipeImage = imagePath;
+        }
+
+        _repository.Recipe.CreateApplicationUserRecipe(user.Id, recipeEntity);
+        await _repository.SaveAsync();
+
+        var successMessage = "Recipe has been created successfully.";
+        var recipeToReturn = _mapper.Map<RecipeDto>(recipeEntity);
+        return CreatedAtRoute(new
+        {
+            authorId = user.Id,
+            id = recipeToReturn.RecipeId
+        }, successMessage);
     }
-
-    _repository.Recipe.CreateApplicationUserRecipe(user.Id, recipeEntity);
-    await _repository.SaveAsync();
-
-    var successMessage = "Recipe has been created successfully.";
-    var recipeToReturn = _mapper.Map<RecipeDto>(recipeEntity);
-    return CreatedAtRoute(new
-    {
-        authorId = user.Id,
-        id = recipeToReturn.RecipeId
-    }, successMessage);
-}
-
 
 
 
@@ -168,7 +165,7 @@ public async Task<IActionResult> CreateApplicationUserRecipe([FromForm] CreateRe
             _logger.LogInfo($"Recipe with id: {recipeId} doesn't exist in the database.");
             return NotFound();
         }
-        
+
         recipeEntity.Title = recipe.Title;
         recipeEntity.Ingredients = recipe.Ingredients;
         recipeEntity.CreationDate = recipe.CreationDate;
@@ -177,23 +174,25 @@ public async Task<IActionResult> CreateApplicationUserRecipe([FromForm] CreateRe
         if (recipe.RecipeImage != null)
         {
             var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
-        
+
             if (!Directory.Exists(uploadsFolderPath))
             {
                 Directory.CreateDirectory(uploadsFolderPath);
             }
-        
-            var uniqueFileName = $"{recipe.RecipeImage.FileName}";
+
+            var fileExtension = Path.GetExtension(recipe.RecipeImage.FileName);
+
+            var uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
             var filePath = Path.Combine(uploadsFolderPath, uniqueFileName);
-        
+
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
                 await recipe.RecipeImage.CopyToAsync(fileStream);
             }
-        
+
             recipeEntity.RecipeImage = $"/images/{uniqueFileName}";
         }
-        
+
         await _repository.SaveAsync();
 
         return NoContent();
