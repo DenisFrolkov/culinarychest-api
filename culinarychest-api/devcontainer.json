@@ -1,6 +1,8 @@
 {
   "name": "C# .NET Core",
   "image": "mcr.microsoft.com/vscode/devcontainers/dotnet:7.0",
+  "forwardPorts": [5170, 44357, 7286],
   "postCreateCommand": "dotnet restore /Users/denis/RiderProjects/culinarychest-api/culinarychest-api.csproj"
 }
+
 
