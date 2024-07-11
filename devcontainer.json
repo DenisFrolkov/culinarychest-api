@@ -1,0 +1,11 @@
+{
+    "name": "ASP.NET Core",
+    "dockerFile": "Dockerfile",
+    "extensions": ["ms-dotnettools.csharp"],
+    "settings": {
+      "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "forwardPorts": [5433], // Проброс порта для доступа к PostgreSQL из Codespaces
+    "postCreateCommand": "sudo service postgresql start" // Команда для старта PostgreSQL в Codespaces
+  }
+  
